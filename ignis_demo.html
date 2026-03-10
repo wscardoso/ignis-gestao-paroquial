@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGNIS - Sistema de Gestão Paroquial (Demo)</title>
+    <!-- Lucide Icons via CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #A32121;
+            --accent: #D1A84A;
+            --background: #1A1C1E;
+            --surface: #24272B;
+            --surface-hover: #2D3136;
+            --border: #313438;
+            --text-primary: #FAFAF7;
+            --text-secondary: #9BA1A6;
+            --success: #2F6F4E;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .logo-container {
+            margin-bottom: 40px;
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            padding-left: 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+            background-color: var(--surface-hover);
+        }
+
+        .nav-item.active {
+            background-color: rgba(163, 33, 33, 0.1);
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 40px;
+        }
+
+        .page-header { margin-bottom: 32px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .header-bottom { display: flex; justify-content: space-between; align-items: flex-start; }
+        
+        .level-badge {
+            display: flex; align-items: center; gap: 8px; background: var(--surface-hover);
+            border: 1px solid var(--border); padding: 6px 16px; border-radius: 100px;
+            font-size: 11px; font-weight: 700; color: var(--accent);
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+
+        .level-switcher select {
+            background: var(--surface); border: 1px solid var(--border); color: var(--text-secondary);
+            font-size: 13px; padding: 6px 12px; border-radius: var(--radius-sm);
+            outline: none; cursor: pointer; transition: var(--transition);
+        }
+
+        .page-title { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+        .page-subtitle { color: var(--text-secondary); font-size: 14px; }
+
+        .btn-primary-action {
+            background-color: var(--primary); color: white; padding: 10px 20px;
+            border-radius: var(--radius-md); font-weight: 600; display: flex;
+            align-items: center; gap: 8px; border: none; cursor: pointer;
+        }
+
+        /* Grid & Cards */
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 24px; margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--surface); border: 1px solid var(--border);
+            padding: 24px; border-radius: var(--radius-lg); transition: var(--transition);
+        }
+
+        .stat-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+        .stat-label { font-size: 14px; color: var(--text-secondary); }
+        .stat-value { font-size: 32px; font-weight: 700; margin: 8px 0; }
+        .stat-trend { color: var(--success); font-size: 12px; display: flex; align-items: center; gap: 4px; }
+
+        /* Tables */
+        .card-table {
+            background: var(--surface); border: 1px solid var(--border);
+            padding: 24px; border-radius: var(--radius-lg);
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th { text-align: left; color: var(--text-secondary); font-size: 12px; padding: 12px; border-bottom: 1px solid var(--border); }
+        td { padding: 16px 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+
+        .badge-module {
+            display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px;
+            font-weight: 700; margin-right: 4px; border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Levels Toggle Logic */
+        .level-section { display: none; }
+        .level-section.active { display: block; }
+
+        /* Onboarding Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--surface); width: 100%; max-width: 600px;
+            padding: 32px; border-radius: var(--radius-lg); border: 1px solid var(--border);
+        }
+
+        /* Mobile View (Fiel) */
+        .fiel-mobile-container {
+            max-width: 400px; margin: 0 auto; background: var(--background);
+            border: 8px solid var(--surface); border-radius: 40px; padding: 24px;
+            min-height: 700px; position: relative;
+        }
+
+        .fiel-action-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0;
+        }
+
+        .fiel-card {
+            background: var(--surface); padding: 16px 8px; border-radius: 12px;
+            text-align: center; font-size: 11px; font-weight: 600;
+        }
+
+        .btn-pray {
+            position: absolute; bottom: 32px; left: 32px; right: 32px;
+            background: var(--primary); color: white; border: none; padding: 16px;
+            border-radius: 12px; font-weight: 700; display: flex; align-items: center;
+            justify-content: center; gap: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar remains persistent -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <i data-lucide="flame"></i>
+                IGNIS
+            </div>
+
+            <nav class="nav-section">
+                <p class="nav-label">Core</p>
+                <a href="#" class="nav-item active"><i data-lucide="layout-dashboard" size="18"></i> Dashboard</a>
+                <a href="#" class="nav-item"><i data-lucide="users" size="18"></i> Communio</a>
+            </nav>
+
+            <nav class="nav-section">
+                <p class="nav-label">Teológico</p>
+                <a href="#" class="nav-item"><i data-lucide="milestone" size="18"></i> Sacramenta</a>
+                <a href="#" class="nav-item"><i data-lucide="send" size="18"></i> Missio</a>
+                <a href="#" class="nav-item"><i data-lucide="calendar" size="18"></i> Pastoralis</a>
+            </nav>
+        </aside>
+
+        <main class="main-content" id="main-area">
+            <header class="page-header">
+                <div class="header-top">
+                    <div id="level-badge-container">
+                        <div class="level-badge"><i data-lucide="shield-check" size="14"></i> <span>Nível 0: Super Admin</span></div>
+                    </div>
+                    
+                    <div class="level-switcher">
+                        <select id="level-select" onchange="switchLevel(this.value)">
+                            <option value="super">Ver como Super Admin</option>
+                            <option value="matriz">Ver como Matriz</option>
+                            <option value="comunidade">Ver como Comunidade</option>
+                            <option value="fiel">Ver como Fiel</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="header-bottom">
+                    <div>
+                        <h1 class="page-title" id="page-title">Dashboard de Infraestrutura</h1>
+                        <p class="page-subtitle" id="page-subtitle">Pulso global do ecossistema IGNIS.</p>
+                    </div>
+                    <button class="btn-primary-action" id="main-action-btn" onclick="openModal()">
+                        <i data-lucide="plus" size="18"></i>
+                        <span>Novo Onboarding</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Level 0 Content -->
+            <div id="section-super" class="level-section active">
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <p class="stat-label">Paróquias Ativas</p>
+                        <h3 class="stat-value">12</h3>
+                        <p class="stat-trend"><i data-lucide="trending-up" size="14"></i> +2 este mês</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-label">Uptime Global</p>
+                        <h3 class="stat-value">99.9%</h3>
+                        <p class="stat-trend"><i data-lucide="activity" size="14"></i> Sistema Estável</p>
+                    </div>
+                </div>
+                <div class="card-table">
+                    <h3>Gestão de Tenants</h3>
+                    <table id="tenants-table">
+                        <thead>
+                            <tr>
+                                <th>Paróquia</th>
+                                <th>Matriz / Diocese</th>
+                                <th>Módulos</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>Sto. Estevão</b></td>
+                                <td>São Paulo</td>
+                                <td><span class="badge-module">Sacra</span><span class="badge-module">Missio</span></td>
+                                <td style="color: var(--success)">Ativo</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Level 1 Content -->
+            <div id="section-matriz" class="level-section">
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <p class="stat-label">Comunidades</p>
+                        <h3 class="stat-value">8</h3>
+                        <p class="stat-trend">2 capelas</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-label">Sacramenta (Ano)</p>
+                        <h3 class="stat-value">156</h3>
+                        <p class="stat-trend">Crescimento constante</p>
+                    </div>
+                </div>
+                <div class="dashboard-grid" id="communities-grid">
+                    <!-- Communities populated by JS -->
+                </div>
+            </div>
+
+            <!-- Level 2 Content -->
+            <div id="section-comunidade" class="level-section">
+                <div class="card-table">
+                    <h3>Triagem Missionária Local</h3>
+                    <div id="triagem-list" style="margin-top: 20px;">
+                        <!-- Tasks populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Level 3 Content -->
+            <div id="section-fiel" class="level-section">
+                <div class="fiel-mobile-container">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                        <div style="width: 40px; height: 40px; background: var(--accent); border-radius: 50%;"></div>
+                        <div>
+                            <p style="font-weight: 700;">Salve Maria, Weyner!</p>
+                            <p style="font-size: 11px; color: var(--text-secondary)">Paróquia Santo Estevão</p>
+                        </div>
+                    </div>
+                    <div class="fiel-action-grid">
+                        <div class="fiel-card"><i data-lucide="map-pin" size="20"></i><br>Visita</div>
+                        <div class="fiel-card"><i data-lucide="flame" size="20"></i><br>Sacra</div>
+                        <div class="fiel-card"><i data-lucide="heart" size="20"></i><br>Dízimo</div>
+                    </div>
+                    <div style="background: var(--surface); padding: 16px; border-radius: 12px;">
+                        <p style="font-size: 12px; font-weight: 700; margin-bottom: 8px;">Próxima Missa</p>
+                        <p style="font-size: 14px;">Dom, 10:00 • Comunidade São Pedro</p>
+                    </div>
+                    <button class="btn-pray">
+                        <i data-lucide="flame" size="20"></i> Pedir Oração
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Onboarding Modal -->
+    <div class="modal-overlay" id="onboarding-modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 16px;">Novo Onboarding de Paróquia</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">Inicie a missão digital de uma nova Matriz.</p>
+            <div style="display: grid; gap: 16px;">
+                <input type="text" placeholder="Nome da Paróquia" style="background: var(--background); border: 1px solid var(--border); padding: 12px; color: white; border-radius: 8px;">
+                <input type="text" placeholder="CNPJ" style="background: var(--background); border: 1px solid var(--border); padding: 12px; color: white; border-radius: 8px;">
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 32px;">
+                <button class="btn-primary-action" style="flex: 1;" onclick="closeModal()">Confirmar Graça</button>
+                <button style="flex: 1; background: transparent; border: 1px solid var(--border); color: white; border-radius: 8px;" onclick="closeModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function switchLevel(level) {
+            // Hide all sections
+            document.querySelectorAll('.level-section').forEach(s => s.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(`section-${level}`).classList.add('active');
+
+            // Update Header
+            const title = document.getElementById('page-title');
+            const subtitle = document.getElementById('page-subtitle');
+            const badge = document.getElementById('level-badge-container');
+            const actionBtn = document.getElementById('main-action-btn');
+
+            if (level === 'super') {
+                title.innerText = "Dashboard de Infraestrutura";
+                subtitle.innerText = "Pulso global do ecossistema IGNIS.";
+                badge.innerHTML = `<div class="level-badge"><i data-lucide="shield-check" size="14"></i> <span>Nível 0: Super Admin</span></div>`;
+                actionBtn.style.display = "flex";
+            } else if (level === 'matriz') {
+                title.innerText = "Gestão Cenáculo";
+                subtitle.innerText = "Coordenação das comunidades e clero.";
+                badge.innerHTML = `<div class="level-badge"><i data-lucide="landmark" size="14"></i> <span>Nível 1: Paróquia Matriz</span></div>`;
+                actionBtn.style.display = "none";
+                renderMatriz();
+            } else if (level === 'comunidade') {
+                title.innerText = "Missão Local";
+                subtitle.innerText = "Operação e triagem pastoral local.";
+                badge.innerHTML = `<div class="level-badge"><i data-lucide="home" size="14"></i> <span>Nível 2: Comunidade</span></div>`;
+                actionBtn.style.display = "none";
+                renderComunidade();
+            } else if (level === 'fiel') {
+                title.innerText = "Minha Chama";
+                subtitle.innerText = "Seu histórico e conexão com a Igreja.";
+                badge.innerHTML = `<div class="level-badge"><i data-lucide="heart" size="14"></i> <span>Nível 3: O Fiel</span></div>`;
+                actionBtn.style.display = "none";
+            }
+            lucide.createIcons();
+        }
+
+        function renderMatriz() {
+            const grid = document.getElementById('communities-grid');
+            grid.innerHTML = `
+                <div class="stat-card" style="border-left: 4px solid var(--accent)">
+                    <h3>Capela Sto. Antonio</h3>
+                    <p style="font-size: 13px; color: var(--text-secondary)">Pe. Carlos • 320 fiéis</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Comunidade São Paulo</h3>
+                    <p style="font-size: 13px; color: var(--text-secondary)">Diác. José • 150 fiéis</p>
+                </div>
+            `;
+        }
+
+        function renderComunidade() {
+            const list = document.getElementById('triagem-list');
+            list.innerHTML = `
+                <div style="padding: 16px; background: var(--surface-hover); border-radius: 12px; border-left: 4px solid var(--primary); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <p style="font-size: 11px; color: var(--accent); font-weight: 700;">VISITA ENFERMOS</p>
+                        <p style="font-size: 16px; font-weight: 600;">Dona Maria Oliveira</p>
+                        <p style="font-size: 12px; color: var(--text-secondary)">Rua das Flores, 123 • Urgente</p>
+                    </div>
+                    <button class="btn-primary-action" style="padding: 8px 16px; font-size: 12px;">Atender</button>
+                </div>
+            `;
+        }
+
+        function openModal() { document.getElementById('onboarding-modal').style.display = "flex"; }
+        function closeModal() { document.getElementById('onboarding-modal').style.display = "none"; }
+    </script>
+</body>
+</html>

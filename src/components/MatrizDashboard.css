@@ -1,0 +1,124 @@
+.matriz-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.strategic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.strategy-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.strategy-card.warning {
+    border-left: 4px solid var(--accent);
+}
+
+.strategy-card.success {
+    border-left: 4px solid var(--success);
+}
+
+.strategy-card.info {
+    border-left: 4px solid var(--primary);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.card-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.icon-warning {
+    color: var(--accent);
+}
+
+.icon-success {
+    color: var(--success);
+}
+
+.icon-info {
+    color: var(--text-primary);
+}
+
+.card-metric {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.card-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.progress-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    margin-bottom: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 3px;
+}
+
+.card-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.stat-mini {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-mini span {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.stat-mini strong {
+    font-size: 18px;
+    color: var(--text-primary);
+}
+
+.progress-fill.low {
+    background: var(--accent);
+}
+
+.progress-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.map-placeholder {
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: var(--text-secondary);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-lg);
+}

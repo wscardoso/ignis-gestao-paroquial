@@ -1,0 +1,17 @@
+.text-danger {
+    color: #ef4444 !important;
+}
+
+.text-danger:hover {
+    background: rgba(239, 68, 68, 0.1) !important;
+}
+
+.active-rule {
+    border-color: var(--accent) !important;
+    background: rgba(209, 168, 74, 0.1) !important;
+    box-shadow: 0 0 10px rgba(209, 168, 74, 0.2);
+}
+
+.recurrence-toggle input[type="checkbox"] {
+    accent-color: var(--accent);
+}

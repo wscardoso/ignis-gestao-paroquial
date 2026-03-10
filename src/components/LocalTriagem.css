@@ -1,0 +1,108 @@
+.triagem-container {
+    margin-top: 32px;
+}
+
+.tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.task-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-radius: var(--radius-lg);
+}
+
+.task-main {
+    flex: 1;
+}
+
+.task-type-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.task-type {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+}
+
+.urgency-icon {
+    color: var(--primary);
+    animation: pulse 1s infinite;
+}
+
+.task-patient {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.task-info {
+    display: flex;
+    gap: 24px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.task-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-assign {
+    background: var(--surface-hover);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.btn-assign:hover {
+    border-color: var(--accent);
+}
+
+.btn-done {
+    padding: 10px;
+    border-radius: var(--radius-md);
+    color: var(--success);
+    background: rgba(47, 111, 78, 0.1);
+}
+
+.urgency-high {
+    border-left: 4px solid var(--primary);
+}
+
+.urgency-medium {
+    border-left: 4px solid var(--accent);
+}
+
+.urgency-low {
+    border-left: 4px solid var(--success);
+}
+
+.section-badge {
+    background: var(--primary);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 4px;
+}

@@ -1,0 +1,117 @@
+.table-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-top: 32px;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.table-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.parishes-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.parishes-table th {
+    padding: 12px 16px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+}
+
+.parishes-table td {
+    padding: 16px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.parishes-table tr:last-child td {
+    border-bottom: none;
+}
+
+.parish-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+}
+
+.parish-avatar {
+    width: 32px;
+    height: 32px;
+    background: rgba(163, 33, 33, 0.1);
+    color: var(--primary);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.module-badges {
+    display: flex;
+    gap: 8px;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.module-badge {
+    background: var(--surface-hover);
+    color: var(--accent);
+    border: 1px solid var(--border);
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-pill.active {
+    background: rgba(47, 111, 78, 0.1);
+    color: var(--success);
+}
+
+.status-pill.inactive {
+    background: rgba(163, 33, 33, 0.1);
+    color: var(--primary);
+}
+
+.action-btn {
+    color: var(--text-secondary);
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.action-btn:hover {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+}
+
+.btn-secondary {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+}

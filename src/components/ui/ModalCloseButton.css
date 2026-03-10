@@ -1,0 +1,23 @@
+.modal-close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.modal-close-btn:hover {
+    background: #d42e2e;
+    color: #fff;
+    border-color: #d42e2e;
+    transform: scale(1.08);
+}

@@ -1,0 +1,277 @@
+.reports-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.reports-header {
+    padding: 30px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-info h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.header-info p {
+    opacity: 0.6;
+    font-size: 0.95rem;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    width: 300px;
+}
+
+.search-bar input {
+    background: none;
+    border: none;
+    color: white;
+    width: 100%;
+    outline: none;
+}
+
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.report-card {
+    padding: 24px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.report-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.report-icon-wrapper {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.report-icon-wrapper.pastoral {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.report-icon-wrapper.sacramental {
+    background: rgba(197, 160, 89, 0.1);
+    color: var(--accent-color);
+}
+
+.report-icon-wrapper.administrativo {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.report-info h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.report-info p {
+    font-size: 0.85rem;
+    opacity: 0.5;
+    line-height: 1.4;
+}
+
+.arrow {
+    margin-left: auto;
+    opacity: 0.2;
+    transition: opacity 0.3s;
+}
+
+.report-card:hover .arrow {
+    opacity: 1;
+    color: var(--accent-color);
+}
+
+/* Preview Modal */
+.report-preview-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.report-preview-modal {
+    width: 100%;
+    max-width: 900px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+.preview-header {
+    padding: 20px 30px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preview-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.preview-title h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.report-content-paper {
+    flex: 1;
+    overflow-y: auto;
+    background: white;
+    color: #1a1a1a;
+    padding: 50px;
+    margin: 30px;
+    border-radius: 4px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Print Specific Styles */
+.print-header {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    border-bottom: 2px solid #1a1a1a;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.parish-logo {
+    font-size: 40px;
+    background: #1a1a1a;
+    color: white;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.parish-info h2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+.parish-info p {
+    font-size: 0.9rem;
+    margin: 2px 0;
+    opacity: 0.8;
+}
+
+.report-name-print {
+    margin-top: 10px !important;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #c5a059;
+}
+
+.print-date {
+    margin-left: auto;
+    font-size: 0.85rem;
+    align-self: flex-start;
+}
+
+.print-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+}
+
+.print-table th {
+    text-align: left;
+    background: #f4f4f4;
+    padding: 12px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    border: 1px solid #ddd;
+}
+
+.print-table td {
+    padding: 12px;
+    font-size: 0.85rem;
+    border: 1px solid #eee;
+}
+
+.print-footer {
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #888;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #printable-report,
+    #printable-report * {
+        visibility: visible;
+    }
+
+    #printable-report {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    .preview-header,
+    .reports-panel,
+    .sidebar,
+    .page-header {
+        display: none !important;
+    }
+}

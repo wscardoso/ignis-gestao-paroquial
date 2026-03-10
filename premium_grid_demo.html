@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGNIS - Agenda Paroquial Premium</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; background: #1A1410; color: #FAFAF7; font-family: 'DM Sans', sans-serif; overflow: hidden; }
+        .sora { font-family: 'Sora', sans-serif; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const IGNIS = {
+          red:      "#A32121",
+          gold:     "#D1A84A",
+          white:    "#FAFAF7",
+          green:    "#2F6F4E",
+          graphite: "#2A2A2A",
+          redDark:   "#3B0A0A",
+          goldDark:  "#3D2C0A",
+          greenDark: "#0D2318",
+          bgMain:    "#1A1410",
+          bgSidebar: "#151210",
+          bgCard:    "#201A14",
+          border:    "#382E22",
+          borderMid: "#4A3C2A",
+          textMuted: "#897560",
+          textFaint: "#564637",
+        };
+
+        const STATUS_CONFIG = {
+          confirmed:  { label: "Confirmado", bg: IGNIS.greenDark, border: IGNIS.green,   dot: "#4CAF82", text: "#C8EDDA" },
+          pending:    { label: "Pendente",   bg: IGNIS.goldDark,  border: IGNIS.gold,    dot: IGNIS.gold, text: "#F0DFA0" },
+          celebrated: { label: "Celebrado",  bg: "#1E1030",        border: "#7C3AED",     dot: "#A78BFA", text: "#DDD6FE" },
+          noshow:     { label: "No-show",    bg: IGNIS.redDark,   border: IGNIS.red,     dot: "#E05555", text: "#F5C0C0" },
+          cancelled:  { label: "Cancelado",  bg: "#1A1A1A",        border: "#444444",     dot: "#666666", text: "#999999" },
+        };
+
+        const RESOURCES = [
+          { id: "bencao",   name: "Bênção de Casas/Comércio", icon: "🏠" },
+          { id: "confissao", name: "Confissão",               icon: "🗨️" },
+          { id: "direcao",  name: "Direção Espiritual",       icon: "👥" },
+          { id: "visita",   name: "Visita aos Enfermos",      icon: "🕊️" },
+        ];
+
+        function ParishSchedulerGrid() {
+            const [isCalendarOpen, setIsCalendarOpen] = React.useState(true);
+            const [modalType, setModalType] = React.useState(null);
+            const [selectedSlot, setSelectedSlot] = React.useState(null);
+            const [selectedAppointment, setSelectedAppointment] = React.useState(null);
+
+            const scheduleData = {
+              "08:00": { bencao: { clientName: "João Silva", status: "confirmed", sacrament: "Bênção de Residência" } },
+              "09:30": { confissao: { clientName: "Maria Oliveira", status: "pending", sacrament: "Confissão Individual" } },
+              "10:00": { direcao: { clientName: "Pe. Joaquim", status: "celebrated", sacrament: "Direção Espiritual" } },
+              "11:00": { visita: { clientName: "Dona Benta", status: "noshow", sacrament: "Visita Hospitalar" } },
+              "14:00": { bencao: { clientName: "Sacolão Central", status: "cancelled", sacrament: "Bênção de Comércio" } },
+              "15:30": { confissao: { clientName: "Ricardo Santos", status: "confirmed", sacrament: "Confissão" } },
+              "16:00": { direcao: { clientName: "Lucia Mendes", status: "pending", sacrament: "Acompanhamento" } },
+              "17:30": { visita: { clientName: "Sr. José", status: "confirmed", sacrament: "Unção dos Enfermos" } },
+              "19:00": { bencao: { clientName: "Nova Matriz", status: "celebrated", sacrament: "Bênção Inaugural" } },
+            };
+
+            const timeSlots = [];
+            for (let h = 6; h <= 22; h++) {
+                timeSlots.push(`${String(h).padStart(2,"0")}:00`);
+                timeSlots.push(`${String(h).padStart(2,"0")}:30`);
+            }
+
+            return (
+                <div style={{ background: IGNIS.bgMain, height: '100vh', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ background: `linear-gradient(90deg, ${IGNIS.red}, ${IGNIS.gold}, ${IGNIS.green})`, height: "3px" }} />
+                    
+                    <header style={{ background: IGNIS.bgCard, borderBottom: `1px solid ${IGNIS.border}` }} className="px-6 py-3 flex items-center justify-between">
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                                <span style={{ color: IGNIS.red }} className="text-xl">🔥</span>
+                                <span style={{ color: IGNIS.white }} className="text-xl font-bold sora tracking-tight">IGNIS</span>
+                                <span style={{ color: IGNIS.textMuted }} className="text-sm">· Agenda Paroquial</span>
+                            </div>
+                            <span style={{ color: IGNIS.textMuted }} className="text-[10px] uppercase font-medium mt-0.5">Quinta-feira, 15 de Fevereiro de 2026</span>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <button onClick={() => setIsCalendarOpen(!isCalendarOpen)} style={{ border: `1px solid ${isCalendarOpen ? IGNIS.gold : IGNIS.border}`, color: isCalendarOpen ? IGNIS.gold : IGNIS.textMuted }} className="px-4 py-2 rounded-xl text-sm font-medium transition-all">
+                                {isCalendarOpen ? 'Ocultar Calendário' : 'Ver Calendário'}
+                            </button>
+                            <button style={{ background: IGNIS.red, color: IGNIS.white }} className="px-5 py-2 rounded-xl text-sm font-bold">
+                                + Novo Agendamento
+                            </button>
+                        </div>
+                    </header>
+
+                    <div className="flex flex-1 overflow-hidden">
+                        {isCalendarOpen && (
+                            <aside style={{ width: '288px', background: IGNIS.bgSidebar, borderRight: `1px solid ${IGNIS.border}` }} className="flex-shrink-0 overflow-y-auto px-6 py-6 scrollbar-thin">
+                                <div className="flex flex-col gap-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex gap-2">
+                                            <button style={{ background: IGNIS.graphite, color: IGNIS.textMuted }} className="p-1 rounded">‹</button>
+                                            <button style={{ background: IGNIS.graphite, color: IGNIS.textMuted }} className="p-1 rounded">›</button>
+                                        </div>
+                                        <div className="text-right">
+                                            <div style={{ color: IGNIS.white }} className="font-bold">Fevereiro 2026</div>
+                                            <div style={{ color: IGNIS.textMuted }} className="text-xs">Quinta-feira</div>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-7 gap-1">
+                                        {["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"].map(d => <div key={d} style={{ color: IGNIS.textFaint }} className="text-[10px] font-semibold text-center uppercase">{d}</div>)}
+                                        {Array.from({ length: 35 }, (_, i) => i - 2).map((d, i) => (
+                                            <button key={i} style={{ background: d === 15 ? IGNIS.red : 'transparent', color: d === 15 ? IGNIS.white : (d === 15 ? IGNIS.gold : IGNIS.textMuted), opacity: d < 1 || d > 31 ? 0.25 : 1 }} className="h-8 w-full rounded-lg text-xs font-medium flex flex-col items-center justify-center">
+                                                {d > 0 && d <= 31 ? d : ''}
+                                                {d === 15 && <div style={{ background: IGNIS.white }} className="w-1 h-1 rounded-full mt-0.5" />}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </aside>
+                        )}
+                        
+                        <main className="flex-1 flex flex-col overflow-hidden">
+                            <div className="p-4">
+                                <div style={{ background: IGNIS.bgCard, border: `1px solid ${IGNIS.border}` }} className="rounded-2xl px-6 py-3 flex items-center gap-6 overflow-x-auto">
+                                    <span style={{ color: IGNIS.textFaint }} className="text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">Legenda:</span>
+                                    {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
+                                        <div key={key} className="flex items-center gap-2 whitespace-nowrap">
+                                            <div style={{ background: cfg.dot }} className="w-2 h-2 rounded-full" />
+                                            <span style={{ color: IGNIS.textMuted }} className="text-xs">{cfg.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="flex-1 overflow-auto px-4 pb-4">
+                                <div style={{ border: `1px solid ${IGNIS.border}`, minWidth: '800px' }} className="rounded-2xl overflow-hidden">
+                                    <table className="w-full border-collapse">
+                                        <thead style={{ background: IGNIS.bgCard }} className="sticky top-0 z-10 border-b border-[#4A3C2A]">
+                                            <tr>
+                                                <th style={{ width: '100px', color: IGNIS.textFaint }} className="px-4 py-4 text-[10px] font-bold uppercase text-left">Horário</th>
+                                                {RESOURCES.map(res => <th key={res.id} style={{ borderLeft: `1px solid ${IGNIS.border}`, color: IGNIS.white }} className="px-4 py-4 text-sm font-semibold text-left">{res.icon} {res.name}</th>)}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {timeSlots.map(time => (
+                                                <tr key={time} style={{ background: time.endsWith(":00") ? "rgba(42,30,18,0.5)" : "rgba(26,20,16,0.4)", borderBottom: `1px solid ${IGNIS.border}` }} className="hover:bg-[rgba(209,168,74,0.04)]">
+                                                    <td className="px-4 py-3 text-center"><span style={{ color: time.endsWith(":00") ? IGNIS.textMuted : IGNIS.textFaint }} className="text-sm font-mono">{time}</span></td>
+                                                    {RESOURCES.map(res => (
+                                                        <td key={res.id} style={{ borderLeft: `1px solid ${IGNIS.border}` }} className="px-2 py-1.5 h-[64px]">
+                                                            {scheduleData[time]?.[res.id] ? (
+                                                                <button style={{ background: STATUS_CONFIG[scheduleData[time][res.id].status].bg, border: `1px solid ${STATUS_CONFIG[scheduleData[time][res.id].status].border}`, color: STATUS_CONFIG[scheduleData[time][res.id].status].text }} className="w-full min-h-[52px] rounded-lg flex items-center justify-between px-3 py-2 text-left hover:brightness-125 transition-all">
+                                                                    <div className="min-w-0">
+                                                                        <div className="font-semibold text-sm truncate">{scheduleData[time][res.id].clientName}</div>
+                                                                        <div className="text-xs opacity-60 truncate">{scheduleData[time][res.id].sacrament}</div>
+                                                                    </div>
+                                                                    <div style={{ background: STATUS_CONFIG[scheduleData[time][res.id].status].dot }} className="w-2.5 h-2.5 rounded-full flex-shrink-0" />
+                                                                </button>
+                                                            ) : (
+                                                                <button style={{ border: `1px dashed ${IGNIS.border}`, color: IGNIS.textFaint }} className="w-full h-full rounded-lg flex items-center justify-center text-sm font-medium hover:border-[#D1A84A] hover:text-[#D1A84A] transition-all">
+                                                                    + Disponível
+                                                                </button>
+                                                            )}
+                                                        </td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<ParishSchedulerGrid />);
+    </script>
+</body>
+</html>

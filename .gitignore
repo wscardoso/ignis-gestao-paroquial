@@ -1,0 +1,4 @@
+.antigravity/
+.gemini/
+node_modules/
+.env

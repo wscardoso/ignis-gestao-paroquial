@@ -1,0 +1,137 @@
+.analytics-dashboard {
+    padding: 20px;
+    border-radius: 16px;
+    background: rgba(13, 14, 21, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.analytics-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 10px;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-weight: 600;
+}
+
+.analytics-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+.chart-container-main {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.chart-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+}
+
+.insights-title {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    color: white;
+}
+
+.insight-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.insight-icon {
+    margin-top: 2px;
+}
+
+.insight-card h4 {
+    margin: 0 0 4px 0;
+    font-size: 0.95rem;
+    color: var(--accent-color);
+}
+
+.insight-card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+/* Insight Variations */
+.insight-card.positive .insight-icon {
+    color: #22c55e;
+}
+
+.insight-card.positive h4 {
+    color: #22c55e;
+}
+
+.insight-card.positive {
+    border-left: 3px solid #22c55e;
+}
+
+.insight-card.neutral .insight-icon {
+    color: #22c55e;
+}
+
+/* Using green for standard status as per request image reference */
+.insight-card.neutral h4 {
+    color: #22c55e;
+}
+
+.insight-card.neutral {
+    border-left: 3px solid #22c55e;
+}
+
+.insight-card.warning .insight-icon {
+    color: #eab308;
+}
+
+.insight-card.warning h4 {
+    color: #eab308;
+}
+
+.insight-card.warning {
+    border-left: 3px solid #eab308;
+}
+
+@media (max-width: 1024px) {
+    .analytics-content {
+        grid-template-columns: 1fr;
+    }
+}

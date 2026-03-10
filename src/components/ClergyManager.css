@@ -1,0 +1,236 @@
+.clergy-container {
+    margin-top: 32px;
+    background: var(--surface);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+}
+
+.btn-add-scale {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+}
+
+.clergy-list {
+    display: grid;
+    gap: 16px;
+}
+
+.clergy-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: var(--background);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+}
+
+.clergy-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.clergy-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--surface-hover);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+}
+
+.clergy-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.clergy-role {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.clergy-status {
+    text-align: right;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.clergy-card.available .status-indicator {
+    color: var(--success);
+}
+
+.clergy-card.busy .status-indicator {
+    color: var(--accent);
+}
+
+.clergy-card.off .status-indicator {
+    color: var(--text-secondary);
+}
+
+.next-event {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* Tabs */
+.header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.tab-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    transition: var(--transition);
+}
+
+.tab-btn.active {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+    border-color: var(--primary);
+}
+
+/* Metrics */
+.clergy-metrics {
+    flex: 1;
+    padding: 0 16px;
+}
+
+.metric {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.metric .label {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.progress-bar-mini {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-bar-mini .fill {
+    height: 100%;
+    background: var(--success);
+}
+
+.progress-bar-mini .fill.warning {
+    background: var(--accent);
+}
+
+/* Schedule View */
+.schedule-view {
+    margin-top: 16px;
+}
+
+.schedule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-weight: 700;
+}
+
+.nav-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* Simplificado para demo */
+    gap: 12px;
+}
+
+.day-column {
+    background: var(--background);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.day-header {
+    background: var(--surface-hover);
+    padding: 8px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border);
+}
+
+.day-events {
+    padding: 8px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.event-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-card.conflict {
+    border-color: var(--accent);
+    background: rgba(209, 168, 74, 0.1);
+}
+
+.event-time {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.event-staff {
+    color: var(--text-secondary);
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.conflict-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--accent);
+    font-weight: 700;
+    margin-top: 4px;
+    font-size: 10px;
+}

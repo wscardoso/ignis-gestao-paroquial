@@ -1,0 +1,35 @@
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.breadcrumb-icon {
+    display: flex;
+    align-items: center;
+    opacity: 0.7;
+}
+
+.breadcrumb-label {
+    white-space: nowrap;
+}
+
+.breadcrumb-separator {
+    color: var(--text-muted);
+    opacity: 0.4;
+}
+
+.breadcrumb-item:last-child .breadcrumb-label {
+    color: var(--accent-color);
+    font-weight: 600;
+}
