@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, Clock, User, Phone, FileText, Save, Loader2, Trash2, AlertTriangle, Repeat, MessageSquare, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, User, Phone, FileText, Save, Loader2, Trash2, AlertTriangle, Repeat, MessageSquare, CheckCircle } from 'lucide-react';
 import { format, setHours, setMinutes, parseISO, startOfDay, endOfDay } from 'date-fns';
 import { ignisApi } from '../services/api';
 import type { Appointment } from '../services/api';

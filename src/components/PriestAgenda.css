@@ -1,0 +1,532 @@
+.priest-agenda {
+  display: flex;
+  gap: 24px;
+  min-height: 600px;
+}
+
+/* ─── Date Controls ─── */
+.agenda-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.agenda-date-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 4px;
+}
+
+.agenda-date-nav button {
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.agenda-date-nav button:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.agenda-date-label {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 0 8px;
+  min-width: 180px;
+  text-align: center;
+}
+
+.agenda-quick-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.agenda-quick-btns button {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.agenda-quick-btns button:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.agenda-quick-btns button.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+/* ─── Main Grid ─── */
+.agenda-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.agenda-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.agenda-slot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+}
+
+.agenda-slot:hover {
+  border-color: var(--primary-light);
+  background: var(--surface-hover);
+}
+
+.slot-time {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 110px;
+  white-space: nowrap;
+}
+
+.slot-status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.slot-status-icon.confirmed {
+  background: rgba(46, 204, 113, 0.15);
+  color: var(--status-confirmed);
+}
+
+.slot-status-icon.completed {
+  background: rgba(155, 89, 182, 0.15);
+  color: var(--status-completed);
+}
+
+.slot-status-icon.pending {
+  background: rgba(243, 156, 18, 0.15);
+  color: var(--status-pending);
+}
+
+.slot-status-icon.cancelled {
+  background: rgba(127, 140, 141, 0.15);
+  color: var(--status-cancelled);
+}
+
+.slot-status-icon.no-show {
+  background: rgba(231, 76, 60, 0.15);
+  color: var(--status-remarcado);
+}
+
+.slot-status-icon.available {
+  background: rgba(168, 168, 190, 0.08);
+  color: var(--text-secondary);
+}
+
+.slot-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.slot-client-name {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+}
+
+.slot-service-type {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 1px;
+}
+
+.slot-empty {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.slot-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: var(--transition-fast);
+}
+
+.agenda-slot:hover .slot-actions {
+  opacity: 1;
+}
+
+.slot-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.slot-action-btn:hover {
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+
+.slot-action-btn.check-in {
+  color: var(--status-confirmed);
+}
+
+.slot-action-btn.check-in:hover {
+  background: rgba(46, 204, 113, 0.15);
+}
+
+.slot-action-btn.no-show {
+  color: var(--status-remarcado);
+}
+
+.slot-action-btn.no-show:hover {
+  background: rgba(231, 76, 60, 0.15);
+}
+
+.slot-action-btn.cancel {
+  color: var(--status-cancelled);
+}
+
+.slot-action-btn.cancel:hover {
+  background: rgba(127, 140, 141, 0.15);
+}
+
+/* ─── Sidebar KPIs ─── */
+.agenda-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+}
+
+.agenda-kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+}
+
+.agenda-kpi-title {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.agenda-kpi-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.kpi-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kpi-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.kpi-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+}
+
+.kpi-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.kpi-dot.confirmed { background: var(--status-confirmed); }
+.kpi-dot.completed { background: var(--status-completed); }
+.kpi-dot.pending { background: var(--status-pending); }
+.kpi-dot.no-show { background: var(--status-remarcado); }
+.kpi-dot.cancelled { background: var(--status-cancelled); }
+.kpi-dot.total { background: var(--accent); }
+
+/* ─── Loading / Empty ─── */
+.agenda-loading,
+.agenda-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+  gap: 8px;
+}
+
+.agenda-loading .spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 900px) {
+  .priest-agenda {
+    flex-direction: column;
+  }
+  .agenda-sidebar {
+    width: 100%;
+  }
+  .agenda-kpi-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .kpi-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .slot-actions {
+    opacity: 1;
+  }
+  .agenda-filters {
+    flex-direction: column;
+  }
+  .agenda-search {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .agenda-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .agenda-date-nav {
+    justify-content: center;
+  }
+  .agenda-quick-btns {
+    justify-content: center;
+  }
+  .agenda-slot {
+    padding: 12px 10px;
+    gap: 8px;
+  }
+  .slot-time {
+    min-width: 80px;
+    font-size: 0.75rem;
+  }
+  .slot-action-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 0.9rem;
+  }
+  .slot-actions {
+    opacity: 1;
+    gap: 6px;
+  }
+  .agenda-sidebar {
+    order: -1;
+  }
+}
+
+/* ─── Filters Row ─── */
+.agenda-filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.agenda-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  flex: 1;
+  min-width: 180px;
+  max-width: 320px;
+  color: var(--text-secondary);
+}
+
+.agenda-search input {
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  outline: none;
+  width: 100%;
+}
+
+.agenda-search input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.agenda-status-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+}
+
+.agenda-status-filter select {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.agenda-community-select {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+}
+
+.agenda-print-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.agenda-print-btn:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+/* ─── Print Styles ─── */
+.print-only {
+  display: none;
+}
+
+.no-print {}
+
+@media print {
+  .no-print,
+  .sidebar,
+  .header-top,
+  .header-bottom {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .print-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #333;
+  }
+
+  .print-header h2 {
+    font-size: 1.4rem;
+    margin: 0 0 4px;
+  }
+
+  .print-header p {
+    font-size: 0.9rem;
+    margin: 2px 0;
+    color: #555;
+  }
+
+  .priest-agenda {
+    flex-direction: column;
+  }
+
+  .agenda-sidebar {
+    width: 100%;
+    page-break-before: avoid;
+  }
+
+  .agenda-slot {
+    border: 1px solid #ccc;
+    background: #fff !important;
+    padding: 6px 10px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .slot-status-icon {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .agenda-kpi-card {
+    border: 1px solid #ccc;
+    background: #fff !important;
+  }
+
+  .agenda-print-wrapper {
+    padding: 0;
+  }
+
+  body {
+    background: #fff !important;
+  }
+}

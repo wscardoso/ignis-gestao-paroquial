@@ -1,0 +1,1 @@
+UPDATE profiles SET role = 'super_admin' WHERE id = '0b204a15-3052-45f9-8b26-d82033b5b6e5';

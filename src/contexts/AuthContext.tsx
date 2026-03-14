@@ -8,6 +8,7 @@ interface UserProfile {
     role: 'super_admin' | 'matriz_admin' | 'comunidade_lead' | 'fiel';
     tenant_id?: string;
     sub_tenant_id?: string;
+    avatar_url?: string;
 }
 
 interface AuthContextType {
@@ -16,8 +17,10 @@ interface AuthContextType {
     profile: UserProfile | null;
     isLoading: boolean;
     signIn: (email: string) => Promise<void>;
+    signInWithPassword: (email: string, password: string) => Promise<void>;
+    signUp: (email: string, password: string, fullName: string) => Promise<void>;
     signOut: () => Promise<void>;
-    devBypass?: (email: string) => void;
+    refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,15 +35,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         console.log('AuthProvider: useEffect starting...');
         // Initial Session Check
-        supabase.auth.getSession().then(({ data: { session }, error }) => {
+        const initSession = async () => {
+            const { data: { session }, error } = await supabase.auth.getSession();
             if (error) console.error('AuthProvider: getSession error', error);
             else console.log('AuthProvider: Session retrieved', session);
 
             setSession(session);
             setUser(session?.user ?? null);
-            if (session?.user) fetchProfile(session.user.id);
+            if (session?.user) {
+                await fetchProfile(session.user.id);
+            }
             setIsLoading(false);
-        });
+        };
+        initSession();
 
         // Listen for Auth Changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -75,33 +82,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (error) throw error;
     };
 
+    const signInWithPassword = async (email: string, password: string) => {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+    };
+
+    const signUp = async (email: string, password: string, fullName: string) => {
+        const { error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { data: { full_name: fullName } }
+        });
+        if (error) throw error;
+    };
+
     const signOut = async () => {
         await supabase.auth.signOut();
     };
 
-    const devBypass = async (email: string) => {
-        console.warn('AUTH_BYPASS: Logging in as dev user...', email);
-        const { data: tenantData } = await supabase.from('tenants').select('id').limit(1).single();
-        const { data: profileData } = await supabase.from('profiles').select('*').limit(1).single();
-
-        const mockUser = { id: profileData?.id || 'dev-id', email } as any;
-        setUser(mockUser);
-        const baseProfile = profileData || {
-            id: 'dev-id',
-            full_name: 'Dev Admin',
-            role: 'super_admin'
-        };
-
-        if (!baseProfile.tenant_id && tenantData) {
-            baseProfile.tenant_id = tenantData.id;
+    const refreshProfile = async () => {
+        if (user) {
+            await fetchProfile(user.id);
         }
-
-        setProfile(baseProfile as UserProfile);
-        setIsLoading(false);
     };
 
     return (
-        <AuthContext.Provider value={{ session, user, profile, isLoading, signIn, signOut, devBypass }}>
+        <AuthContext.Provider value={{ session, user, profile, isLoading, signIn, signInWithPassword, signUp, signOut, refreshProfile }}>
             {children}
         </AuthContext.Provider>
     );

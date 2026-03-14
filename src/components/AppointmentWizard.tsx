@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, Sparkles, User, Phone, CheckCircle } from 'lucide-react';
+import { Calendar, Sparkles, User, Phone } from 'lucide-react';
 import { format, setHours, setMinutes } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { ignisApi } from '../services/api';
 import type { Community } from '../services/api';
 import { ModalCloseButton } from './ui/ModalCloseButton';

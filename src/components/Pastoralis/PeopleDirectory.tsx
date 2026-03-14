@@ -15,6 +15,9 @@ import { ignisApi } from '../../services/api';
 import type { Person } from '../../services/api';
 import { PersonForm } from './PersonForm';
 import { PersonDetails } from './PersonDetails';
+import { PastoralGroupForm } from './PastoralGroupForm';
+import { ModuleHeader } from '../ui/ModuleHeader';
+import { PastoralGroupsTab } from './PastoralGroupsTab';
 import './Pastoralis.css';
 
 interface PeopleDirectoryProps {
@@ -25,7 +28,8 @@ export const PeopleDirectory: React.FC<PeopleDirectoryProps> = ({ tenantId }) =>
     const [people, setPeople] = useState<Person[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
-    const [view, setView] = useState<'grid' | 'form' | 'detail'>('grid');
+    const [mainTab, setMainTab] = useState<'people' | 'groups'>('people');
+    const [view, setView] = useState<'grid' | 'form' | 'detail' | 'groupForm'>('grid');
     const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
     useEffect(() => {
@@ -75,57 +79,102 @@ export const PeopleDirectory: React.FC<PeopleDirectoryProps> = ({ tenantId }) =>
         setView('form');
     };
 
-    return (
-        <div className="module-container">
-            <header className="module-header glass" style={{ marginBottom: '24px', padding: '20px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                        <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.5rem' }}>
-                            <Users size={24} className="text-accent" /> Pastoralis: Fiéis
-                        </h2>
-                        <p style={{ opacity: 0.7, fontSize: '0.9rem' }}>Gestão centralizada da comunidade paroquial.</p>
+    const headerActions = (
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <div className="sub-nav glass" style={{ padding: '6px', display: 'flex', gap: '4px', borderRadius: '12px' }}>
+                <button 
+                    className={`btn-secondary ${mainTab === 'people' ? 'active-tab' : ''}`}
+                    onClick={() => { setMainTab('people'); setView('grid'); }}
+                    style={{ flex: 1, color: mainTab === 'people' ? 'var(--accent-color)' : 'inherit', padding: '6px 12px' }}
+                >
+                    <User size={16} /> Fiéis
+                </button>
+                <button 
+                    className={`btn-secondary ${mainTab === 'groups' ? 'active-tab' : ''}`}
+                    onClick={() => setMainTab('groups')}
+                    style={{ flex: 1, color: mainTab === 'groups' ? 'var(--accent-color)' : 'inherit', padding: '6px 12px' }}
+                >
+                    <Users size={16} /> Pastorais
+                </button>
+            </div>
+            {mainTab === 'people' && view === 'grid' && (
+                <button
+                    className="btn-primary-action"
+                    onClick={() => {
+                        setSelectedPerson(null);
+                        setView('form');
+                    }}
+                >
+                    <UserPlus size={18} />
+                    <span>Novo Fiel</span>
+                </button>
+            )}
+            {mainTab === 'groups' && view !== 'groupForm' && (
+                <button
+                    className="btn-primary-action"
+                    onClick={() => setView('groupForm')}
+                >
+                    <Plus size={18} />
+                    <span>Nova Pastoral</span>
+                </button>
+            )}
+            {mainTab === 'people' && view === 'grid' && (
+                <form onSubmit={handleSearch} className="search-bar" style={{ display: 'flex', gap: '10px' }}>
+                    <div className="search-input-wrapper" style={{ flex: 1, position: 'relative' }}>
+                        <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
+                        <input
+                            type="text"
+                            placeholder="Buscar por nome ou CPF..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            style={{ paddingLeft: '40px', width: '100%', height: '42px', backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)' }}
+                        />
                     </div>
-                    {view === 'grid' && (
-                        <button className="btn-primary" onClick={() => {
-                            setSelectedPerson(null);
-                            setView('form');
-                        }}>
-                            <UserPlus size={18} /> Novo Cadastro
-                        </button>
-                    )}
+                    <button type="submit" className="btn-secondary">
+                        <Filter size={18} /> Filtrar
+                    </button>
+                </form>
+            )}
+        </div>
+    );
+
+    return (
+        <div className="module-container fade-in">
+            <ModuleHeader
+                title="IGNIS Pastoralis"
+                subtitle="Gestão centralizada do diretório de fiéis e pastorais."
+                icon={Users}
+                actions={headerActions}
+            />
+
+            {view === 'groupForm' ? (
+                <div className="form-container glass" style={{ maxWidth: '600px', margin: '0 auto' }}>
+                    <PastoralGroupForm 
+                        tenantId={tenantId}
+                        onClose={() => setView('grid')}
+                        onSuccess={() => {
+                            setView('grid');
+                            // Em um fluxo real, PastoralGroupsTab deveria ter reload
+                            // Para simplificar, quando voltar pra grid, o mainTab=='groups' renderizará novo Mount()
+                        }}
+                    />
                 </div>
-
-                {view === 'grid' && (
-                    <form onSubmit={handleSearch} className="search-bar" style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
-                        <div className="search-input-wrapper" style={{ flex: 1, position: 'relative' }}>
-                            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
-                            <input
-                                type="text"
-                                placeholder="Buscar por nome ou CPF..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                style={{ paddingLeft: '40px', width: '100%', height: '42px' }}
-                            />
-                        </div>
-                        <button type="submit" className="btn-secondary">
-                            <Filter size={18} /> Filtrar
-                        </button>
-                    </form>
-                )}
-            </header>
-
-            {view === 'grid' ? (
-                <div className="people-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
-                    {isLoading ? (
-                        [1, 2, 3, 4].map(i => <div key={i} className="skeleton glass" style={{ height: '180px', borderRadius: '15px' }}></div>)
-                    ) : people.length > 0 ? (
-                        people.map(person => (
-                            <div
-                                key={person.id}
-                                className="person-card glass hover-effect"
-                                style={{ padding: '20px', position: 'relative', cursor: 'pointer' }}
-                                onClick={() => handlePersonClick(person)}
-                            >
+            ) : mainTab === 'groups' ? (
+                <PastoralGroupsTab tenantId={tenantId} />
+            ) : (
+                <>
+                    {view === 'grid' ? (
+                        <div className="people-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+                            {isLoading ? (
+                                [1, 2, 3, 4].map(i => <div key={i} className="skeleton glass" style={{ height: '180px', borderRadius: '15px' }}></div>)
+                            ) : people.length > 0 ? (
+                                people.map(person => (
+                                    <div
+                                        key={person.id}
+                                        className="person-card glass hover-effect"
+                                        style={{ padding: '20px', position: 'relative', cursor: 'pointer' }}
+                                        onClick={() => handlePersonClick(person)}
+                                    >
                                 <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
                                     <div className="avatar" style={{
                                         width: '60px',
@@ -213,8 +262,8 @@ export const PeopleDirectory: React.FC<PeopleDirectoryProps> = ({ tenantId }) =>
                         person={selectedPerson || undefined}
                         onCancel={() => setView('grid')}
                         onSuccess={() => {
-                            setView('grid');
                             fetchPeople();
+                            setView('grid');
                         }}
                     />
                 </div>
@@ -227,6 +276,8 @@ export const PeopleDirectory: React.FC<PeopleDirectoryProps> = ({ tenantId }) =>
                         onEdit={handleEdit}
                     />
                 )
+            )}
+            </>
             )}
         </div>
     );

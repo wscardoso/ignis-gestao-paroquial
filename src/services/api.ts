@@ -48,7 +48,7 @@ export interface Appointment {
 export interface Sacrament {
     id: string;
     tenantId: string;
-    type: 'baptism' | 'marriage' | 'confirmation';
+    type: 'baptism' | 'marriage' | 'confirmation' | 'first_communion' | 'anointing_of_sick';
     celebrantId?: string;
     subjectId?: string; // Link to people table
     celebratoryDate: string;
@@ -76,6 +76,19 @@ export interface Sacrament {
     createdAt?: string;
 }
 
+export interface StaffMember {
+    id: string;
+    tenantId: string;
+    name: string;
+    role: string;
+    email?: string;
+    phone?: string;
+    status: 'available' | 'busy' | 'off' | 'inactive';
+    joinedAt?: string;
+    notes?: string;
+    createdAt?: string;
+}
+
 export interface Person {
     id: string;
     tenantId: string;
@@ -89,6 +102,53 @@ export interface Person {
     sacramentsData?: any;
     groups?: string[];
     status: 'active' | 'inactive' | 'deceased';
+    createdAt?: string;
+}
+
+export interface PastoralGroup {
+    id: string;
+    tenantId: string;
+    name: string;
+    description?: string;
+    coordinatorId?: string;
+    viceCoordinatorId?: string;
+    treasurerId?: string;
+    schedule?: string;
+    isActive: boolean;
+    createdAt?: string;
+}
+
+export interface PastoralGroupMember {
+    personId: string;
+    groupId: string;
+    role: string;
+    joinedAt: string;
+    person?: Person;
+    group?: PastoralGroup;
+}
+
+export interface FinancialCategory {
+    id: string;
+    tenantId: string;
+    name: string;
+    type: 'income' | 'expense';
+    isActive: boolean;
+}
+
+export interface FinancialTransaction {
+    id: string;
+    tenantId: string;
+    categoryId?: string;
+    categoryName?: string;
+    personId?: string;
+    personName?: string;
+    type: 'income' | 'expense';
+    amount: number;
+    description?: string;
+    transactionDate: string;
+    paymentMethod: 'cash' | 'pix' | 'credit_card' | 'debit_card' | 'bank_transfer' | 'check' | 'other';
+    status: 'pending' | 'completed' | 'cancelled';
+    receiptUrl?: string;
     createdAt?: string;
 }
 
@@ -178,6 +238,20 @@ export const ignisApi = {
                 members: 0,
                 metrics: '0/mês'
             } as Community;
+        },
+        delete: async (id: string) => {
+            const { error } = await supabase
+                .from('sub_tenants')
+                .delete()
+                .eq('id', id);
+            if (error) throw error;
+        },
+        getLinkedCounts: async (id: string) => {
+            const { count: appts } = await supabase
+                .from('appointments')
+                .select('*', { count: 'exact', head: true })
+                .eq('sub_tenant_id', id);
+            return { appointments: appts || 0 };
         }
     },
     appointments: {
@@ -330,7 +404,7 @@ export const ignisApi = {
                 .select()
                 .single();
             if (error) throw error;
-            return newItem as Sacrament;
+            return newItem as unknown as Sacrament;
         },
         getByPerson: async (tenantId: string, personId: string) => {
             const { data, error } = await supabase
@@ -374,8 +448,33 @@ export const ignisApi = {
                 entryNumber: item.entry_number,
                 subjectName: item.subject_name,
                 details: item.details,
-                createdAt: item.created_at
+            createdAt: item.created_at
             })) as Sacrament[];
+        },
+        update: async (id: string, data: Partial<Sacrament>) => {
+            const payload: Record<string, any> = {};
+            if (data.type !== undefined) payload.type = data.type;
+            if (data.subjectName !== undefined) payload.subject_name = data.subjectName;
+            if (data.subjectId !== undefined) payload.subject_id = data.subjectId || null;
+            if (data.celebrantId !== undefined) payload.celebrant_id = data.celebrantId || null;
+            if (data.celebratoryDate !== undefined) payload.celebratory_date = data.celebratoryDate;
+            if (data.bookNumber !== undefined) payload.book_number = data.bookNumber;
+            if (data.pageNumber !== undefined) payload.page_number = data.pageNumber;
+            if (data.entryNumber !== undefined) payload.entry_number = data.entryNumber;
+            if (data.details !== undefined) payload.details = data.details;
+
+            const { error } = await supabase
+                .from('sacraments')
+                .update(payload)
+                .eq('id', id);
+            if (error) throw error;
+        },
+        delete: async (id: string) => {
+            const { error } = await supabase
+                .from('sacraments')
+                .delete()
+                .eq('id', id);
+            if (error) throw error;
         }
     },
     people: {
@@ -425,6 +524,85 @@ export const ignisApi = {
                 createdAt: data.created_at
             } as Person;
         },
+        getGroups: async (tenantId: string) => {
+            const { data, error } = await supabase
+                .from('pastoral_groups')
+                .select('*')
+                .eq('tenant_id', tenantId);
+            if (error) throw error;
+            return (data || []).map((d: any) => ({
+                id: d.id,
+                tenantId: d.tenant_id,
+                name: d.name,
+                description: d.description,
+                coordinatorId: d.coordinator_id,
+                viceCoordinatorId: d.vice_coordinator_id,
+                treasurerId: d.treasurer_id,
+                schedule: d.schedule,
+                isActive: d.is_active,
+                createdAt: d.created_at
+            })) as PastoralGroup[];
+        },
+        createGroup: async (data: Omit<PastoralGroup, 'id' | 'createdAt' | 'isActive'>) => {
+            const { data: ng, error } = await supabase.from('pastoral_groups').insert([{
+                tenant_id: data.tenantId,
+                name: data.name,
+                description: data.description,
+                coordinator_id: data.coordinatorId || null,
+                vice_coordinator_id: data.viceCoordinatorId || null,
+                treasurer_id: data.treasurerId || null,
+                schedule: data.schedule
+            }]).select().single();
+            if (error) throw error;
+            return ng as unknown as PastoralGroup;
+        },
+        getGroupMembers: async (groupId: string) => {
+            const { data, error } = await supabase
+                .from('person_pastoral_groups')
+                .select(`
+                    *,
+                    person:people(*)
+                `)
+                .eq('group_id', groupId);
+            if (error) throw error;
+            return (data || []).map((item: any) => ({
+                id: item.id,
+                groupId: item.group_id,
+                personId: item.person_id,
+                role: item.role,
+                joinedAt: item.joined_at,
+                person: {
+                    id: item.person.id,
+                    tenantId: item.person.tenant_id,
+                    name: item.person.name,
+                    cpf: item.person.cpf,
+                    birthDate: item.person.birth_date,
+                    email: item.person.email,
+                    phone: item.person.phone,
+                    address: item.person.address,
+                    photoUrl: item.person.photo_url,
+                    sacramentsData: item.person.sacraments_data,
+                    groups: item.person.groups,
+                    status: item.person.status,
+                    createdAt: item.person.created_at
+                }
+            })) as PastoralGroupMember[];
+        },
+        addMemberToGroup: async (groupId: string, personId: string, role: string = 'Membro') => {
+            const { error } = await supabase.from('person_pastoral_groups').insert([{
+                group_id: groupId,
+                person_id: personId,
+                role
+            }]);
+            if (error) throw error;
+        },
+        removeMemberFromGroup: async (groupId: string, personId: string) => {
+            const { error } = await supabase.from('person_pastoral_groups')
+                .delete()
+                .eq('group_id', groupId)
+                .eq('person_id', personId);
+            if (error) throw error;
+        },
         upsert: async (data: Partial<Person> & { tenantId: string; name: string }) => {
             const payload = {
                 tenant_id: data.tenantId,
@@ -447,7 +625,7 @@ export const ignisApi = {
                 .single();
 
             if (error) throw error;
-            return result as Person;
+            return result as unknown as Person;
         },
         search: async (tenantId: string, query: string) => {
             const { data, error } = await supabase
@@ -456,8 +634,96 @@ export const ignisApi = {
                 .eq('tenant_id', tenantId)
                 .ilike('name', `%${query}%`);
             if (error) throw error;
-            return (data || []) as Person[];
+            return (data || []) as unknown as Person[];
         }
+    },
+    staff: {
+        getByTenant: async (tenantId: string) => {
+            const { data, error } = await supabase
+                .from('staff')
+                .select('*')
+                .eq('tenant_id', tenantId)
+                .order('name', { ascending: true });
+            if (error) throw error;
+            return (data || []).map((item: any) => ({
+                id: item.id,
+                tenantId: item.tenant_id,
+                name: item.name,
+                role: item.role,
+                email: item.email,
+                phone: item.phone,
+                status: item.status,
+                joinedAt: item.joined_at,
+                notes: item.notes,
+                createdAt: item.created_at,
+            })) as StaffMember[];
+        },
+        create: async (data: Omit<StaffMember, 'id' | 'createdAt'>) => {
+            const { data: newItem, error } = await supabase
+                .from('staff')
+                .insert([{
+                    tenant_id: data.tenantId,
+                    name: data.name,
+                    role: data.role,
+                    email: data.email,
+                    phone: data.phone,
+                    status: data.status || 'available',
+                    joined_at: data.joinedAt,
+                    notes: data.notes,
+                }])
+                .select()
+                .single();
+            if (error) throw error;
+            return {
+                id: newItem.id,
+                tenantId: newItem.tenant_id,
+                name: newItem.name,
+                role: newItem.role,
+                email: newItem.email,
+                phone: newItem.phone,
+                status: newItem.status,
+                joinedAt: newItem.joined_at,
+                notes: newItem.notes,
+                createdAt: newItem.created_at,
+            } as StaffMember;
+        },
+        update: async (id: string, data: Partial<StaffMember>) => {
+            const payload: Record<string, any> = {};
+            if (data.name !== undefined) payload.name = data.name;
+            if (data.role !== undefined) payload.role = data.role;
+            if (data.email !== undefined) payload.email = data.email;
+            if (data.phone !== undefined) payload.phone = data.phone;
+            if (data.status !== undefined) payload.status = data.status;
+            if (data.joinedAt !== undefined) payload.joined_at = data.joinedAt;
+            if (data.notes !== undefined) payload.notes = data.notes;
+
+            const { data: updated, error } = await supabase
+                .from('staff')
+                .update(payload)
+                .eq('id', id)
+                .select()
+                .single();
+            if (error) throw error;
+            return {
+                id: updated.id,
+                tenantId: updated.tenant_id,
+                name: updated.name,
+                role: updated.role,
+                email: updated.email,
+                phone: updated.phone,
+                status: updated.status,
+                joinedAt: updated.joined_at,
+                notes: updated.notes,
+                createdAt: updated.created_at,
+            } as StaffMember;
+        },
+        delete: async (id: string) => {
+            const { error } = await supabase
+                .from('staff')
+                .delete()
+                .eq('id', id);
+            if (error) throw error;
+        },
     },
     governance: {
         transferCommunity: async (communityId: string, targetTenantId: string) => {
@@ -485,6 +751,144 @@ export const ignisApi = {
                 activeAppointments: (appointments || []).filter((a: any) => a.tenant_id === p.id && a.status === 'confirmed').length,
                 totalAppointments: (appointments || []).filter((a: any) => a.tenant_id === p.id).length
             }));
+        },
+        getLocalStats: async (tenantId: string) => {
+            // Fetch communities and metrics for a specific parish
+            const { data: communities, error: cError } = await supabase
+                .from('sub_tenants')
+                .select('*')
+                .eq('tenant_id', tenantId);
+            
+            const { data: appointments, error: aError } = await supabase
+                .from('appointments')
+                .select('*')
+                .eq('tenant_id', tenantId);
+
+            if (cError || aError) throw cError || aError;
+
+            // Group by sub_tenant for local metrics
+            return (communities || []).map(c => {
+                const cAppts = (appointments || []).filter(a => (a as any).sub_tenant_id === c.id);
+                return {
+                    id: c.id,
+                    name: c.name,
+                    activeAppointments: cAppts.filter(a => a.status === 'pending' || a.status === 'confirmed').length,
+                    totalAppointments: cAppts.length,
+                    efficiency: Math.round((cAppts.filter(a => a.status === 'completed').length / (cAppts.length || 1)) * 100)
+                };
+            });
+        }
+    },
+    administratio: {
+        getCategories: async (tenantId: string, type?: 'income' | 'expense') => {
+            let query = supabase.from('financial_categories').select('*').eq('tenant_id', tenantId).eq('is_active', true);
+            if (type) query = query.eq('type', type);
+            
+            const { data, error } = await query.order('name', { ascending: true });
+            if (error) throw error;
+            
+            return (data || []).map((item: any) => ({
+                id: item.id,
+                tenantId: item.tenant_id,
+                name: item.name,
+                type: item.type,
+                isActive: item.is_active
+            })) as FinancialCategory[];
+        },
+        createCategory: async (data: Omit<FinancialCategory, 'id' | 'isActive'>) => {
+            const { data: newCat, error } = await supabase
+                .from('financial_categories')
+                .insert([{
+                    tenant_id: data.tenantId,
+                    name: data.name,
+                    type: data.type
+                }])
+                .select()
+                .single();
+            if (error) throw error;
+            return {
+                id: newCat.id,
+                tenantId: newCat.tenant_id,
+                name: newCat.name,
+                type: newCat.type,
+                isActive: newCat.is_active
+            } as FinancialCategory;
+        },
+        getTransactions: async (tenantId: string, startDate?: string, endDate?: string) => {
+            let query = supabase
+                .from('financial_transactions')
+                .select(`
+                    *,
+                    category:financial_categories(name),
+                    person:people(name)
+                `)
+                .eq('tenant_id', tenantId);
+
+            if (startDate) query = query.gte('transaction_date', startDate);
+            if (endDate) query = query.lte('transaction_date', endDate);
+
+            const { data, error } = await query.order('transaction_date', { ascending: false });
+            if (error) throw error;
+
+            return (data || []).map((item: any) => ({
+                id: item.id,
+                tenantId: item.tenant_id,
+                categoryId: item.category_id,
+                categoryName: item.category?.name,
+                personId: item.person_id,
+                personName: item.person?.name,
+                type: item.type,
+                amount: Number(item.amount),
+                description: item.description,
+                transactionDate: item.transaction_date,
+                paymentMethod: item.payment_method,
+                status: item.status,
+                receiptUrl: item.receipt_url,
+                createdAt: item.created_at
+            })) as FinancialTransaction[];
+        },
+        createTransaction: async (data: Omit<FinancialTransaction, 'id' | 'createdAt' | 'categoryName' | 'personName'>) => {
+            const { data: newTx, error } = await supabase
+                .from('financial_transactions')
+                .insert([{
+                    tenant_id: data.tenantId,
+                    category_id: data.categoryId || null,
+                    person_id: data.personId || null,
+                    type: data.type,
+                    amount: data.amount,
+                    description: data.description || null,
+                    transaction_date: data.transactionDate,
+                    payment_method: data.paymentMethod,
+                    status: data.status,
+                    receipt_url: data.receiptUrl || null
+                }])
+                .select(`
+                    *,
+                    category:financial_categories(name),
+                    person:people(name)
+                `)
+                .single();
+            if (error) throw error;
+            return {
+                id: newTx.id,
+                tenantId: newTx.tenant_id,
+                categoryId: newTx.category_id,
+                categoryName: newTx.category?.name,
+                personId: newTx.person_id,
+                personName: newTx.person?.name,
+                type: newTx.type,
+                amount: Number(newTx.amount),
+                description: newTx.description,
+                transactionDate: newTx.transaction_date,
+                paymentMethod: newTx.payment_method,
+                status: newTx.status,
+                receiptUrl: newTx.receipt_url,
+                createdAt: newTx.created_at
+            } as FinancialTransaction;
+        },
+        deleteTransaction: async (id: string) => {
+            const { error } = await supabase.from('financial_transactions').delete().eq('id', id);
+            if (error) throw error;
         }
     },
     notifications: {

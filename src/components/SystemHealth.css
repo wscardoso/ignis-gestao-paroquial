@@ -33,6 +33,10 @@
     color: var(--success);
 }
 
+.health-error {
+    color: var(--primary);
+}
+
 .health-metrics {
     display: flex;
     gap: 24px;

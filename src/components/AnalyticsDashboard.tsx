@@ -145,7 +145,7 @@ export const AnalyticsDashboard: React.FC = () => {
                 return (
                     <div className="chart-container-main">
                         <div className="chart-header">
-                            <h3 style={{ color: '#6366f1' }}><Clock size={20} /> Mapa de Calor Semanal</h3>
+                            <h3 style={{ color: 'var(--primary-light)' }}><Clock size={20} /> Mapa de Calor Semanal</h3>
                         </div>
                         <div className="heatmap-grid" style={{ marginTop: '20px' }}>
                             <div className="heatmap-labels" style={{ display: 'grid', gridTemplateColumns: '80px repeat(4, 1fr)', gap: '10px', marginBottom: '10px', opacity: 0.5, fontSize: '0.8rem' }}>
@@ -158,10 +158,10 @@ export const AnalyticsDashboard: React.FC = () => {
                             {weeklyHeatmap.map((item) => (
                                 <div key={item.day} style={{ display: 'grid', gridTemplateColumns: '80px repeat(4, 1fr)', gap: '10px', marginBottom: '8px', alignItems: 'center' }}>
                                     <div style={{ fontSize: '0.9rem', fontWeight: '600' }}>{item.day}</div>
-                                    <div className="heat-cell" style={{ background: `rgba(99, 102, 241, ${item['08h'] / 100})`, height: '30px', borderRadius: '4px' }}></div>
-                                    <div className="heat-cell" style={{ background: `rgba(99, 102, 241, ${item['10h'] / 100})`, height: '30px', borderRadius: '4px' }}></div>
-                                    <div className="heat-cell" style={{ background: `rgba(99, 102, 241, ${item['14h'] / 100})`, height: '30px', borderRadius: '4px' }}></div>
-                                    <div className="heat-cell" style={{ background: `rgba(99, 102, 241, ${item['18h'] / 100})`, height: '30px', borderRadius: '4px' }}></div>
+                                    <div className="heat-cell" style={{ background: `rgba(163, 33, 33, ${0.15 + (item['08h'] / 100) * 0.85})`, height: '30px', borderRadius: '4px' }}></div>
+                                    <div className="heat-cell" style={{ background: `rgba(163, 33, 33, ${0.15 + (item['10h'] / 100) * 0.85})`, height: '30px', borderRadius: '4px' }}></div>
+                                    <div className="heat-cell" style={{ background: `rgba(163, 33, 33, ${0.15 + (item['14h'] / 100) * 0.85})`, height: '30px', borderRadius: '4px' }}></div>
+                                    <div className="heat-cell" style={{ background: `rgba(163, 33, 33, ${0.15 + (item['18h'] / 100) * 0.85})`, height: '30px', borderRadius: '4px' }}></div>
                                 </div>
                             ))}
                         </div>

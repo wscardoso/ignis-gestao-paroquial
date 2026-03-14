@@ -50,8 +50,10 @@ export const SacramentalHistory: React.FC<SacramentalHistoryProps> = ({ tenantId
     const getLabel = (type: string) => {
         switch (type) {
             case 'baptism': return 'Batismo';
+            case 'first_communion': return '1ª Eucaristia';
             case 'marriage': return 'Matrimônio';
             case 'confirmation': return 'Crisma';
+            case 'anointing_of_sick': return 'Unção dos Enfermos';
             default: return type;
         }
     };

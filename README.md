@@ -1,41 +1,50 @@
 # Ignis - Sistema de Gestão Pastoral
 
-Este documento contém o planejamento base e Roadmap para a construção do **Ignis**, focado na gestão sacramental e paroquial.
+Sistema completo de gestão sacramental e paroquial.
 
-## Roadmap & Planejamento Revisado
+## Roadmap & Planejamento
 
-### FASE 0 — FUNDAÇÃO (bloqueante)
-- [x] **[0.1]** Auth Supabase validado (login, logout, refresh token)
-- [x] **[0.2]** RLS policies revisadas
-- [x] **[0.3]** Tipografia Cinzel + Lato aplicada globalmente
-- [x] **[0.4]** React Query configurado
-- [x] **[0.5]** Schema Supabase atualizado (status 'remarcado', celebrant_name)
+### FASE 0 — FUNDAÇÃO ✅
+- [x] Auth Supabase validado (login, logout, refresh token)
+- [x] RLS policies revisadas
+- [x] Tipografia Cinzel + Lato aplicada globalmente
+- [x] React Query configurado
+- [x] Schema Supabase atualizado
 
-### FASE 1 — MVP MISSIO PONTA A PONTA
-- [x] **[M1]** Visão Diária refatorada com design da referência
-- [x] **[M4]** Switcher de visões (Abas) 
-- [x] **[M5]** Formulário de agendamento (Drawer Modal) com máscara WhatsApp e dropdown de Padre
-- [x] **[M4b]** Filtros (Comunidades, etc.)
-- [x] **[M6]** Modal de detalhes de Agendamento + permissões por perfil
-- [x] Testes de integração (CRUD de appointments via Supabase)
+### FASE 1 — MVP MISSIO ✅
+- [x] Visão Diária, Semanal e Mensal
+- [x] Formulário de agendamento com máscara WhatsApp
+- [x] Filtros por Comunidade
+- [x] Modal de detalhes + permissões por perfil
 
-### FASE 2 — EXPANSÃO MISSIO + OUTROS MÓDULOS
-- [x] **[M2]** Visão Semanal
-- [x] **[M3]** Visão Mensal
-- [ ] Modelagem e tela Sacramenta conectado ao backend
-- [ ] Modelagem e tela Pastoralis conectado ao backend
-- [ ] Polimento visual contínuo
+### FASE 2 — EXPANSÃO ✅
+- [x] Sacramenta conectado ao backend (Batismos/Matrimônios)
+- [x] Pastoralis conectado ao backend (Diretório de Pessoas)
+- [x] Polimento visual contínuo
 
-### FASE 3 — PRODUÇÃO
-- [ ] Responsividade + acessibilidade (WCAG)
-- [ ] Error boundaries + toast notifications
-- [ ] CI/CD (GitHub Actions → Vercel/Netlify)
+### FASE 3 — PRODUÇÃO ✅
+- [x] Responsividade mobile (sidebar mobile, grids adaptativos)
+- [x] Acessibilidade (focus-visible, prefers-reduced-motion, sr-only)
+- [x] Error boundaries globais
+- [x] Toast notifications estilizadas
+- [x] Triggers e dados seed no banco
+- [ ] CI/CD (GitHub Actions)
 - [ ] Testes E2E (Playwright)
 
 ---
 
-## Stack:
+## Stack
 - Vite + React + TypeScript
 - @tanstack/react-query
 - lucide-react (Icons)
-- Supabase (Auth, RLS, Database)
+- Lovable Cloud / Supabase (Auth, RLS, Database, Edge Functions)
+- date-fns · recharts · react-hot-toast
+
+## Banco de Dados
+Tabelas com RLS ativo:
+- `tenants` — Paróquias
+- `sub_tenants` — Comunidades / Capelas
+- `profiles` — Perfis de usuário (auto-criados no signup)
+- `appointments` — Agendamentos (Missio)
+- `sacraments` — Batismos, Matrimônios, Crismas (Sacramenta)
+- `people` — Diretório de fiéis (Pastoralis)

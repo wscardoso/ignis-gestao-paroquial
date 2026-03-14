@@ -10,7 +10,7 @@ import './EditParishModal.css';
 // Schema Validation with Zod
 const schema = z.object({
     name: z.string().min(1, 'Nome é obrigatório'),
-    cnpj: z.string().regex(/^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/, 'CNPJ inválido'),
+    cnpj: z.string().optional().or(z.literal('')),
     status: z.enum(['active', 'inactive', 'implanting']),
     address: z.string().optional(),
     number: z.string().optional(),
@@ -59,18 +59,18 @@ export const EditParishModal: React.FC<EditParishModalProps> = ({ isOpen, onClos
                 setFormData({
                     name: data.name || '',
                     cnpj: data.cnpj || '',
-                    status: data.status || 'active',
+                    status: (data.status as any) || 'active',
                     address: data.address || '',
-                    number: data.number || '', // Assuming number might exist, added here
+                    number: (data as any).number || '',
                     neighborhood: data.neighborhood || '',
                     city: data.city || '',
                     state: data.state || '',
                     zip_code: data.zip_code || '',
                     phone: data.phone || '',
-                    email: data.email || '',
+                    email: (data as any).email || '',
                     priest_name: data.priest_name || '',
-                    foundation_date: data.foundation_date || '',
-                    notes: data.notes || '',
+                    foundation_date: (data as any).foundation_date || '',
+                    notes: (data as any).notes || '',
                 });
                 if (data.logo_url) setLogoPreview(data.logo_url);
             }
@@ -116,6 +116,7 @@ export const EditParishModal: React.FC<EditParishModalProps> = ({ isOpen, onClos
 
                 const { data: publicUrlData } = supabase.storage.from('parishes').getPublicUrl(fileName);
                 finalLogoUrl = publicUrlData.publicUrl;
+                setLogoPreview(finalLogoUrl);
             }
 
             const updatePayload = {
@@ -131,7 +132,7 @@ export const EditParishModal: React.FC<EditParishModalProps> = ({ isOpen, onClos
             onClose();
         } catch (err: any) {
             if (err instanceof z.ZodError) {
-                toast.error((err as any).errors[0].message);
+                toast.error(err.issues?.[0]?.message || 'Erro de validação');
             } else {
                 toast.error(err.message || 'Erro ao atualizar paróquia');
             }

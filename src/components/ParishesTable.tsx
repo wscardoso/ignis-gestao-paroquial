@@ -11,7 +11,9 @@ import './ParishesTable.css';
 export const ParishesTable: React.FC<{ refreshTrigger?: number }> = ({ refreshTrigger }) => {
     const [parishes, setParishes] = useState<Tenant[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
+    const [moduleTenant, setModuleTenant] = useState<Tenant | null>(null);
+    const [governanceTenant, setGovernanceTenant] = useState<Tenant | null>(null);
+    const [editTenant, setEditTenant] = useState<Tenant | null>(null);
     const [isModuleModalOpen, setIsModuleModalOpen] = useState(false);
     const [isGovernanceModalOpen, setIsGovernanceModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -113,7 +115,7 @@ export const ParishesTable: React.FC<{ refreshTrigger?: number }> = ({ refreshTr
                                         <button
                                             className="action-btn"
                                             onClick={() => {
-                                                setSelectedTenant(parish);
+                                                setEditTenant(parish);
                                                 setIsEditModalOpen(true);
                                             }}
                                             title="Editar Paróquia"
@@ -125,7 +127,7 @@ export const ParishesTable: React.FC<{ refreshTrigger?: number }> = ({ refreshTr
                                     <button
                                         className="action-btn"
                                         onClick={() => {
-                                            setSelectedTenant(parish);
+                                            setModuleTenant(parish);
                                             setIsModuleModalOpen(true);
                                         }}
                                         title="Gerenciar Módulos"
@@ -135,7 +137,7 @@ export const ParishesTable: React.FC<{ refreshTrigger?: number }> = ({ refreshTr
                                     <button
                                         className="action-btn"
                                         onClick={() => {
-                                            setSelectedTenant(parish);
+                                            setGovernanceTenant(parish);
                                             setIsGovernanceModalOpen(true);
                                         }}
                                         title="Governança & Gestão"
@@ -154,31 +156,32 @@ export const ParishesTable: React.FC<{ refreshTrigger?: number }> = ({ refreshTr
                 isOpen={isModuleModalOpen}
                 onClose={() => {
                     setIsModuleModalOpen(false);
-                    setSelectedTenant(null);
+                    setModuleTenant(null);
                 }}
-                tenant={selectedTenant}
+                tenant={moduleTenant}
                 onSuccess={() => {
                     // Refresh is handled by useEffect dependency
                 }}
             />
 
             <GovernanceModal
+                key={governanceTenant?.id || 'none'}
                 isOpen={isGovernanceModalOpen}
                 onClose={() => {
                     setIsGovernanceModalOpen(false);
-                    setSelectedTenant(null);
+                    setGovernanceTenant(null);
                 }}
-                tenant={selectedTenant}
+                tenant={governanceTenant}
             />
 
-            {selectedTenant && (
+            {editTenant && (
                 <EditParishModal
                     isOpen={isEditModalOpen}
                     onClose={() => {
                         setIsEditModalOpen(false);
-                        setSelectedTenant(null);
+                        setEditTenant(null);
                     }}
-                    parishId={selectedTenant.id}
+                    parishId={editTenant.id}
                 />
             )}
         </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, User, Smartphone, Mail } from 'lucide-react';
+import { Shield, Smartphone } from 'lucide-react';
 import './StaffDirectory.css';
 
 interface StaffMember {

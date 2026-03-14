@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 import { X, Send, Loader2 } from 'lucide-react';
-import { ignisApi } from '../services/api';
+import { supabase } from '../services/supabase';
+import toast from 'react-hot-toast';
 import './OnboardingModal.css';
+
+const ALL_MODULES = ['Sacramenta', 'Missio', 'Pastoralis', 'Communio', 'Administratio'];
+const MODULE_IDS: Record<string, string> = {
+    Sacramenta: 'sacramenta',
+    Missio: 'missio',
+    Pastoralis: 'pastoralis',
+    Communio: 'communio',
+    Administratio: 'administratio',
+};
 
 interface OnboardingModalProps {
     isOpen: boolean;
@@ -19,26 +29,42 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
         adminEmail: '',
         adminPassword: ''
     });
+    const [selectedModules, setSelectedModules] = useState<string[]>(['sacramenta']);
 
     if (!isOpen) return null;
+
+    const toggleModule = (mod: string) => {
+        const id = MODULE_IDS[mod];
+        setSelectedModules(prev =>
+            prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]
+        );
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
         try {
-            await ignisApi.tenants.create({
-                name: formData.name,
-                cnpj: formData.cnpj
+            const { data, error } = await supabase.functions.invoke('create-parish-admin', {
+                body: {
+                    name: formData.name,
+                    cnpj: formData.cnpj,
+                    diocese: formData.diocese,
+                    adminName: formData.adminName,
+                    adminEmail: formData.adminEmail,
+                    adminPassword: formData.adminPassword,
+                    modules: selectedModules,
+                },
             });
 
-            // Show toast or feedback here in future
-            alert("Paróquia criada com a graça de Deus! 🙏");
+            if (error) throw error;
+            if (data?.error) throw new Error(data.error);
 
+            toast.success('Paróquia criada com a graça de Deus! 🙏');
             if (onSuccess) onSuccess();
             onClose();
-        } catch (error) {
-            alert("Erro ao criar paróquia.");
+        } catch (error: any) {
+            toast.error(error?.message || 'Erro ao criar paróquia.');
         } finally {
             setIsLoading(false);
         }
@@ -118,6 +144,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
                                 onChange={handleChange}
                                 type="email"
                                 placeholder="paroco@diocese.org"
+                                required
                             />
                         </div>
                         <div className="form-group">
@@ -128,6 +155,8 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
                                 onChange={handleChange}
                                 type="password"
                                 placeholder="••••••••"
+                                required
+                                minLength={6}
                             />
                         </div>
                     </div>
@@ -139,9 +168,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
                     <div className="form-group">
                         <label>Módulos Iniciais</label>
                         <div className="modules-selection">
-                            {['Sacramenta', 'Missio', 'Pastoralis', 'Communio', 'Administratio'].map(mod => (
+                            {ALL_MODULES.map(mod => (
                                 <label key={mod} className="checkbox-item">
-                                    <input type="checkbox" defaultChecked={mod === 'Sacramenta'} />
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedModules.includes(MODULE_IDS[mod])}
+                                        onChange={() => toggleModule(mod)}
+                                    />
                                     <span>{mod}</span>
                                 </label>
                             ))}

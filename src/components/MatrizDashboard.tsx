@@ -1,13 +1,19 @@
 import React from 'react';
-import { Map, AlertTriangle, TrendingUp, Users } from 'lucide-react';
+import { Map, AlertTriangle, TrendingUp, Users, MapPin } from 'lucide-react';
 import { CommunitiesManager } from './CommunitiesManager';
 import { SchedulingGrid } from './SchedulingGrid';
-import { AnalyticsDashboard } from './AnalyticsDashboard';
+import { ModuleHeader } from './ui/ModuleHeader';
 import './MatrizDashboard.css';
 
 export const MatrizDashboard: React.FC = () => {
     return (
-        <div className="matriz-dashboard">
+        <div className="matriz-dashboard fade-in">
+            <ModuleHeader 
+                title="IGNIS Missio" 
+                subtitle="Gestão Territorial e Agendamentos Pastorais" 
+                icon={MapPin} 
+            />
+            
             <div className="strategic-grid">
                 <div className="strategy-card warning">
                     <div className="card-header">
@@ -57,7 +63,11 @@ export const MatrizDashboard: React.FC = () => {
                 </div>
             </div>
 
-            <AnalyticsDashboard />
+            <div className="glass" style={{ padding: '24px', borderRadius: '16px', textAlign: 'center', opacity: 0.7 }}>
+                <TrendingUp size={32} style={{ margin: '0 auto 8px' }} />
+                <p style={{ fontWeight: 600 }}>Analytics por Módulo</p>
+                <p style={{ fontSize: '13px' }}>Relatórios específicos em breve</p>
+            </div>
 
             <SchedulingGrid />
 
