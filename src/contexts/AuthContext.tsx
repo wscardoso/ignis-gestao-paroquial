@@ -22,6 +22,7 @@ interface AuthContextType {
     signOut: () => Promise<void>;
     refreshProfile: () => Promise<void>;
     resetPassword: (email: string) => Promise<void>;
+    isRecoveringPassword: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,6 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<User | null>(null);
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isRecoveringPassword, setIsRecoveringPassword] = useState(false);
 
     useEffect(() => {
         console.log('AuthProvider: useEffect starting...');
@@ -51,10 +53,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         initSession();
 
         // Listen for Auth Changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            console.log('AuthProvider: Auth state change', _event, session);
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            console.log('AuthProvider: Auth state change', event, session);
             setSession(session);
             setUser(session?.user ?? null);
+
+            if (event === 'PASSWORD_RECOVERY') {
+                setIsRecoveringPassword(true);
+            } else if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+                setIsRecoveringPassword(false);
+            }
+
             if (session?.user) {
                 fetchProfile(session.user.id);
             } else {
@@ -115,7 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ session, user, profile, isLoading, signIn, signInWithPassword, signUp, signOut, refreshProfile, resetPassword }}>
+        <AuthContext.Provider value={{ session, user, profile, isLoading, signIn, signInWithPassword, signUp, signOut, refreshProfile, resetPassword, isRecoveringPassword }}>
             {children}
         </AuthContext.Provider>
     );

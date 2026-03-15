@@ -22,6 +22,7 @@ import { AppointmentWizard } from './components/AppointmentWizard';
 import { PriestAgenda } from './components/PriestAgenda';
 import { UserProfileModal } from './components/UserProfileModal';
 import { LocalGovernancePanel } from './components/Governance/LocalGovernancePanel';
+import { ResetPasswordModal } from './components/ResetPasswordModal';
 import { useDashboardKPIs } from './hooks/useDashboardKPIs';
 import {
   Plus,
@@ -64,9 +65,11 @@ const levelLabels: Record<Level, string> = {
 
 function App() {
   const { activeTenant, allTenants, switchTenant, isLoading: isTenantLoading } = useTenant();
-  const { user, profile, isLoading: isAuthLoading, signOut } = useAuth();
+  const { user, profile, isLoading: isAuthLoading, signOut, isRecoveringPassword } = useAuth();
 
   const userRole = profile?.role || 'fiel';
+  console.log('App: Current User Role:', userRole, 'Profile:', profile);
+
   const allowedLevels = levelsByRole[userRole] || ['fiel'];
   const defaultLevel = defaultLevelForRole[userRole] || 'fiel';
 
@@ -78,14 +81,19 @@ function App() {
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-
   // Update currentLevel when profile loads and current level isn't allowed
   useEffect(() => {
-    if (profile?.role && !allowedLevels.includes(currentLevel)) {
-      setCurrentLevel(defaultLevel);
-    } else if (profile?.role && currentLevel === 'fiel' && defaultLevel !== 'fiel') {
-      // First load: profile just arrived, upgrade from default 'fiel'
-      setCurrentLevel(defaultLevel);
+    if (profile?.role) {
+      const newDefault = defaultLevelForRole[profile.role] || 'fiel';
+      const newAllowed = levelsByRole[profile.role] || ['fiel'];
+      
+      console.log('App: Profile updated, adjusting level. Role:', profile.role, 'Allowed:', newAllowed);
+
+      if (!newAllowed.includes(currentLevel)) {
+        setCurrentLevel(newDefault);
+      } else if (currentLevel === 'fiel' && newDefault !== 'fiel') {
+        setCurrentLevel(newDefault);
+      }
     }
   }, [profile?.role]);
 
@@ -254,6 +262,10 @@ function App() {
 
   if (isAuthLoading || isTenantLoading) {
     return <div className="loading-state">Iniciando IGNIS...</div>;
+  }
+
+  if (isRecoveringPassword) {
+    return <ResetPasswordModal onClose={() => window.location.reload()} />;
   }
 
   if (!user) {
