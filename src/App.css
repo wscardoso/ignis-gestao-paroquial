@@ -10,16 +10,28 @@
 .tenant-dropdown {
   appearance: none;
   -webkit-appearance: none;
-  background: transparent;
-  border: none;
-  color: inherit;
+  background: var(--surface-light);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
   font: inherit;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  padding-right: 18px;
-  max-width: 220px;
+  padding: 6px 30px 6px 12px;
+  border-radius: var(--radius-sm);
+  max-width: 250px;
   text-overflow: ellipsis;
+  transition: var(--transition);
+}
+
+.tenant-dropdown:hover {
+  border-color: var(--accent);
+  background: var(--surface-hover);
+}
+
+.tenant-dropdown option {
+  background-color: var(--surface);
+  color: var(--text-primary);
 }
 
 .tenant-dropdown:focus {
@@ -28,9 +40,10 @@
 
 .dropdown-chevron {
   position: absolute;
-  right: 0;
+  right: 10px;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.7;
+  color: var(--text-secondary);
 }
 
 .app-container {
@@ -167,13 +180,19 @@
 .level-switcher select {
   background: var(--surface);
   border: 1px solid var(--border);
-  color: var(--text-secondary);
+  color: var(--text-primary);
   font-size: 13px;
+  font-weight: 500;
   padding: 6px 12px;
   border-radius: var(--radius-sm);
   outline: none;
   cursor: pointer;
   transition: var(--transition);
+}
+
+.level-switcher select option {
+  background-color: var(--surface);
+  color: var(--text-primary);
 }
 
 .level-switcher select:hover {
