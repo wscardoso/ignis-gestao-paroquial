@@ -9,9 +9,9 @@ export const Login: React.FC = () => {
     const [fullName, setFullName] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [mode, setMode] = useState<'login' | 'signup'>('login');
+    const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>('login');
     const [message, setMessage] = useState('');
-    const { signInWithPassword, signUp } = useAuth();
+    const { signInWithPassword, signUp, resetPassword } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -20,12 +20,15 @@ export const Login: React.FC = () => {
         try {
             if (mode === 'signup') {
                 await signUp(email, password, fullName);
-                setMessage('Conta criada com sucesso! Você já está logado.');
+                setMessage('Conta criada com sucesso! Verifique seu e-mail para confirmar.');
+            } else if (mode === 'forgot') {
+                await resetPassword(email);
+                setMessage('E-mail de recuperação enviado! Verifique sua caixa de entrada.');
             } else {
                 await signInWithPassword(email, password);
             }
         } catch (error: any) {
-            setMessage(error.message || 'Erro ao autenticar. Tente novamente.');
+            setMessage(error.message || 'Erro ao processar. Tente novamente.');
         } finally {
             setIsLoading(false);
         }
@@ -45,7 +48,7 @@ export const Login: React.FC = () => {
                 </div>
 
                 {message && (
-                    <div className={`login-message ${message.includes('Erro') ? 'error' : 'success'}`}>
+                    <div className={`login-message ${message.toLowerCase().includes('erro') || message.toLowerCase().includes('invalid') ? 'error' : 'success'}`}>
                         {message}
                     </div>
                 )}
@@ -73,46 +76,62 @@ export const Login: React.FC = () => {
                             required
                         />
                     </div>
-                    <div className="form-group" style={{ position: 'relative' }}>
-                        <label>Senha</label>
-                        <div style={{ position: 'relative' }}>
-                            <input
-                                type={showPassword ? 'text' : 'password'}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="••••••••"
-                                required
-                                minLength={6}
-                                style={{ paddingRight: '2.5rem' }}
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                style={{
-                                    position: 'absolute',
-                                    right: '0.75rem',
-                                    top: '50%',
-                                    transform: 'translateY(-50%)',
-                                    background: 'none',
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    color: 'var(--text-muted, #888)',
-                                    padding: '0.25rem',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                }}
-                                aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-                            >
-                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                            </button>
+                    {mode !== 'forgot' && (
+                        <div className="form-group" style={{ position: 'relative' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <label>Senha</label>
+                                {mode === 'login' && (
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setMode('forgot')}
+                                        style={{ background: 'none', border: 'none', color: 'var(--accent-color, #ff4444)', fontSize: '0.8rem', cursor: 'pointer' }}
+                                    >
+                                        Esqueceu a senha?
+                                    </button>
+                                )}
+                            </div>
+                            <div style={{ position: 'relative' }}>
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="••••••••"
+                                    required
+                                    minLength={6}
+                                    style={{ paddingRight: '2.5rem' }}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    style={{
+                                        position: 'absolute',
+                                        right: '0.75rem',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        color: 'var(--text-muted, #888)',
+                                        padding: '0.25rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                    }}
+                                    aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <button type="submit" className="btn-primary-action" disabled={isLoading}>
+                    )}
+                    
+                    <button type="submit" className="btn-primary-action" disabled={isLoading} style={{ marginTop: '1rem' }}>
                         {isLoading ? <Loader2 className="animate-spin" /> : (
                             mode === 'login' ? (
                                 <><LogIn size={18} /> Entrar</>
-                            ) : (
+                            ) : mode === 'signup' ? (
                                 <><UserPlus size={18} /> Criar Conta</>
+                            ) : (
+                                <><LogIn size={18} /> Recuperar Senha</>
                             )
                         )}
                     </button>
@@ -125,7 +144,7 @@ export const Login: React.FC = () => {
                         </button>
                     ) : (
                         <button className="btn-secondary" onClick={() => { setMode('login'); setMessage(''); }}>
-                            Já tem conta? Faça login
+                            Voltar para o login
                         </button>
                     )}
                 </div>
