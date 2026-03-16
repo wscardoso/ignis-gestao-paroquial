@@ -113,7 +113,9 @@ export interface PastoralGroup {
     coordinatorId?: string;
     viceCoordinatorId?: string;
     treasurerId?: string;
-    schedule?: string;
+    meetingDay?: string;
+    meetingTime?: string;
+    schedule?: string; // Legacy support
     isActive: boolean;
     createdAt?: string;
 }
@@ -561,8 +563,8 @@ export const ignisApi = {
                 description: data.description,
                 coordinator_id: data.coordinatorId || null,
                 vice_coordinator_id: data.viceCoordinatorId || null,
-                treasurer_id: data.treasurerId || null,
-                schedule: data.schedule
+                meeting_day: data.meetingDay,
+                meeting_time: data.meetingTime
             }]).select().single();
             if (error) throw error;
             return ng as unknown as PastoralGroup;
