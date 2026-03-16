@@ -543,6 +543,17 @@ export const ignisApi = {
                 createdAt: d.created_at
             })) as PastoralGroup[];
         },
+        updateGroup: async (id: string, data: Partial<Omit<PastoralGroup, 'id' | 'tenantId' | 'createdAt' | 'isActive'>>) => {
+            const payload: Record<string, any> = {};
+            if (data.name !== undefined) payload.name = data.name;
+            if (data.description !== undefined) payload.description = data.description;
+            if (data.schedule !== undefined) payload.schedule = data.schedule;
+            if (data.coordinatorId !== undefined) payload.coordinator_id = data.coordinatorId || null;
+            if (data.viceCoordinatorId !== undefined) payload.vice_coordinator_id = data.viceCoordinatorId || null;
+            if (data.treasurerId !== undefined) payload.treasurer_id = data.treasurerId || null;
+            const { error } = await supabase.from('pastoral_groups').update(payload).eq('id', id);
+            if (error) throw error;
+        },
         createGroup: async (data: Omit<PastoralGroup, 'id' | 'createdAt' | 'isActive'>) => {
             const { data: ng, error } = await supabase.from('pastoral_groups').insert([{
                 tenant_id: data.tenantId,

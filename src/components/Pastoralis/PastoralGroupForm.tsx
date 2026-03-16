@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, X, Info } from 'lucide-react';
 import { ignisApi } from '../../services/api';
-import type { PastoralGroup } from '../../services/api';
+import type { PastoralGroup, Person } from '../../services/api';
 
 interface PastoralGroupFormProps {
     tenantId: string;
@@ -10,27 +10,73 @@ interface PastoralGroupFormProps {
     onSuccess: () => void;
 }
 
+const DAYS_OF_WEEK = [
+    'Segunda-feira',
+    'Terça-feira',
+    'Quarta-feira',
+    'Quinta-feira',
+    'Sexta-feira',
+    'Sábado',
+    'Domingo',
+];
+
+function parseSchedule(schedule?: string): { day: string; time: string } {
+    if (!schedule) return { day: '', time: '' };
+    // Tries to parse "Quarta-feira às 19:00"
+    const match = schedule.match(/^(.+?)\s+às\s+(\d{2}:\d{2})$/);
+    if (match) return { day: match[1], time: match[2] };
+    return { day: schedule, time: '' };
+}
+
 export const PastoralGroupForm: React.FC<PastoralGroupFormProps> = ({ tenantId, group, onClose, onSuccess }) => {
+    const parsed = parseSchedule(group?.schedule);
+
     const [name, setName] = useState(group?.name || '');
     const [description, setDescription] = useState(group?.description || '');
-    const [schedule, setSchedule] = useState(group?.schedule || '');
+    const [meetingDay, setMeetingDay] = useState(parsed.day);
+    const [meetingTime, setMeetingTime] = useState(parsed.time);
+    const [coordinatorId, setCoordinatorId] = useState(group?.coordinatorId || '');
+    const [viceCoordinatorId, setViceCoordinatorId] = useState(group?.viceCoordinatorId || '');
+    const [people, setPeople] = useState<Person[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        ignisApi.people.getAll(tenantId)
+            .then(setPeople)
+            .catch(() => setPeople([]));
+    }, [tenantId]);
+
+    const buildSchedule = () => {
+        if (!meetingDay && !meetingTime) return '';
+        if (meetingDay && meetingTime) return `${meetingDay} às ${meetingTime}`;
+        return meetingDay || meetingTime;
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         setError('');
 
+        const schedule = buildSchedule();
+
         try {
             if (group) {
-                // await ignisApi.pastoralis.updateGroup(group.id, { name, description, schedule });
-            } else {
-                await ignisApi.people.createGroup({
-                    tenantId: tenantId,
+                await ignisApi.people.updateGroup(group.id, {
                     name,
                     description,
-                    schedule
+                    schedule,
+                    coordinatorId: coordinatorId || undefined,
+                    viceCoordinatorId: viceCoordinatorId || undefined,
+                });
+            } else {
+                await ignisApi.people.createGroup({
+                    tenantId,
+                    name,
+                    description,
+                    schedule,
+                    coordinatorId: coordinatorId || undefined,
+                    viceCoordinatorId: viceCoordinatorId || undefined,
                 });
             }
             onSuccess();
@@ -46,10 +92,10 @@ export const PastoralGroupForm: React.FC<PastoralGroupFormProps> = ({ tenantId, 
             <button type="button" className="btn-icon" style={{ position: 'absolute', top: '16px', right: '16px' }} onClick={onClose}>
                 <X size={20} />
             </button>
-            
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
                 <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Users size={24} style={{ color: 'var(--accent)' }}/>
+                    <Users size={24} style={{ color: 'var(--accent)' }} />
                 </div>
                 <div>
                     <h2 style={{ fontSize: '1.2rem', margin: 0 }}>{group ? 'Editar Pastoral' : 'Nova Pastoral'}</h2>
@@ -66,36 +112,78 @@ export const PastoralGroupForm: React.FC<PastoralGroupFormProps> = ({ tenantId, 
             <div style={{ display: 'grid', gap: '20px' }}>
                 <div className="form-group">
                     <label className="form-label">Nome da Pastoral <span style={{ color: 'var(--accent)' }}>*</span></label>
-                    <input 
-                        type="text" 
-                        required 
-                        value={name} 
-                        onChange={e => setName(e.target.value)} 
-                        className="input-field" 
+                    <input
+                        type="text"
+                        required
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                        className="input-field"
                         placeholder="Ex: Pastoral do Dízimo"
                     />
                 </div>
-                
+
                 <div className="form-group">
                     <label className="form-label">Descrição</label>
-                    <textarea 
-                        rows={3} 
-                        value={description} 
-                        onChange={e => setDescription(e.target.value)} 
+                    <textarea
+                        rows={3}
+                        value={description}
+                        onChange={e => setDescription(e.target.value)}
                         className="input-field"
                         placeholder="Objetivo principal deste grupo..."
                     />
                 </div>
 
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    <div className="form-group">
+                        <label className="form-label">Coordenador</label>
+                        <select
+                            value={coordinatorId}
+                            onChange={e => setCoordinatorId(e.target.value)}
+                            className="input-field"
+                        >
+                            <option value="">— Selecionar pessoa —</option>
+                            {people.map(p => (
+                                <option key={p.id} value={p.id}>{p.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="form-group">
+                        <label className="form-label">Vice-Coordenador</label>
+                        <select
+                            value={viceCoordinatorId}
+                            onChange={e => setViceCoordinatorId(e.target.value)}
+                            className="input-field"
+                        >
+                            <option value="">— Selecionar pessoa —</option>
+                            {people.map(p => (
+                                <option key={p.id} value={p.id}>{p.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
                 <div className="form-group">
                     <label className="form-label">Horário de Encontros</label>
-                    <input 
-                        type="text" 
-                        value={schedule} 
-                        onChange={e => setSchedule(e.target.value)} 
-                        className="input-field"
-                        placeholder="Ex: Terças-feiras às 19h30"
-                    />
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '12px' }}>
+                        <select
+                            value={meetingDay}
+                            onChange={e => setMeetingDay(e.target.value)}
+                            className="input-field"
+                        >
+                            <option value="">— Dia da semana —</option>
+                            {DAYS_OF_WEEK.map(d => (
+                                <option key={d} value={d}>{d}</option>
+                            ))}
+                        </select>
+                        <input
+                            type="time"
+                            value={meetingTime}
+                            onChange={e => setMeetingTime(e.target.value)}
+                            className="input-field"
+                            style={{ width: '130px' }}
+                        />
+                    </div>
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
