@@ -52,9 +52,9 @@ export const ModuleToggleModal: React.FC<ModuleToggleModalProps> = ({
 
             onSuccess();
             onClose();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error updating modules:', error);
-            alert('Erro ao atualizar módulos.');
+            alert(`Erro ao atualizar módulos: ${error.message || 'Verifique suas permissões.'}`);
         } finally {
             setIsSaving(false);
         }
