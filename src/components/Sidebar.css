@@ -45,12 +45,13 @@
 }
 
 .logo-tagline {
-    font-size: 10px;
+    font-size: 14px;
     color: #C9A24D;
     opacity: 0.8;
     font-style: italic;
     line-height: 1.2;
     white-space: nowrap;
+    margin-top: 4px;
 }
 
 .nav-section {
