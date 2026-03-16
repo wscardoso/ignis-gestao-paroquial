@@ -35,6 +35,22 @@
     font-weight: 700;
     letter-spacing: 0.1em;
     color: var(--text-primary);
+    line-height: 1.1;
+}
+
+.logo-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.logo-tagline {
+    font-size: 10px;
+    color: #C9A24D;
+    opacity: 0.8;
+    font-style: italic;
+    line-height: 1.2;
+    white-space: nowrap;
 }
 
 .nav-section {

@@ -21,7 +21,7 @@ async function repair() {
         console.log('No tenants found. Creating default...');
         const { data: newTenant, error: tError } = await supabase
             .from('tenants')
-            .insert([{ name: 'Paróquia Cenáculo Dev', status: 'active', slogan: 'Sistema de Gestão Pastoral' }])
+            .insert([{ name: 'Paróquia Cenáculo Dev', status: 'active', slogan: 'Sistema de Gestão Paroquial' }])
             .select()
             .single();
         if (tError) throw tError;

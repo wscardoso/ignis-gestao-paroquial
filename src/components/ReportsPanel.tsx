@@ -501,7 +501,7 @@ export const ReportsPanel: React.FC<{ tenantId: string }> = ({ tenantId }) => {
                     {renderReportContent()}
                 </div>
                 <footer className="print-footer">
-                    <p>Gerado automaticamente por IGNIS - Sistema de Gestão Pastoral</p>
+                    <p>Gerado automaticamente por IGNIS - Sistema de Gestão Paroquial</p>
                     <p>Página 1 de 1</p>
                 </footer>
             </div>

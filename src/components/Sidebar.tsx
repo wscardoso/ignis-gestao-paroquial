@@ -117,7 +117,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="logo-icon">
           <Flame size={20} fill="currentColor" />
         </div>
-        <span className="logo-text">IGNIS</span>
+        <div className="logo-details">
+          <span className="logo-text">IGNIS</span>
+          <span className="logo-tagline">"Onde o Espírito Santo age, a Igreja se move."</span>
+        </div>
       </div>
 
       <nav className="nav-section">

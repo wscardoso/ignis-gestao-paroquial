@@ -43,7 +43,7 @@ export const Login: React.FC = () => {
                     </div>
                     <h1>IGNIS</h1>
                     <p className="login-subtitle">
-                        Sistema de Gestão Pastoral
+                        Sistema de Gestão Paroquial
                     </p>
                 </div>
 

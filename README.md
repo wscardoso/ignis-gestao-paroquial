@@ -1,4 +1,4 @@
-# Ignis - Sistema de Gestão Pastoral
+# Ignis - Sistema de Gestão Paroquial
 
 Sistema completo de gestão sacramental e paroquial.
 
