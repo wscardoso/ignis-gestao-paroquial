@@ -110,12 +110,12 @@ export interface PastoralGroup {
     tenantId: string;
     name: string;
     description?: string;
-    coordinatorId?: string;
-    viceCoordinatorId?: string;
+    coordinatorName?: string;
+    viceCoordinatorName?: string;
     treasurerId?: string;
     meetingDay?: string;
     meetingTime?: string;
-    schedule?: string; // Legacy support
+    schedule?: string;
     isActive: boolean;
     createdAt?: string;
 }
@@ -537,9 +537,11 @@ export const ignisApi = {
                 tenantId: d.tenant_id,
                 name: d.name,
                 description: d.description,
-                coordinatorId: d.coordinator_id,
-                viceCoordinatorId: d.vice_coordinator_id,
+                coordinatorName: d.coordinator_name,
+                viceCoordinatorName: d.vice_coordinator_name,
                 treasurerId: d.treasurer_id,
+                meetingDay: d.meeting_day,
+                meetingTime: d.meeting_time,
                 schedule: d.schedule,
                 isActive: d.is_active,
                 createdAt: d.created_at
@@ -549,10 +551,11 @@ export const ignisApi = {
             const payload: Record<string, any> = {};
             if (data.name !== undefined) payload.name = data.name;
             if (data.description !== undefined) payload.description = data.description;
-            if (data.schedule !== undefined) payload.schedule = data.schedule;
-            if (data.coordinatorId !== undefined) payload.coordinator_id = data.coordinatorId || null;
-            if (data.viceCoordinatorId !== undefined) payload.vice_coordinator_id = data.viceCoordinatorId || null;
-            if (data.treasurerId !== undefined) payload.treasurer_id = data.treasurerId || null;
+            if (data.meetingDay !== undefined) payload.meeting_day = data.meetingDay;
+            if (data.meetingTime !== undefined) payload.meeting_time = data.meetingTime;
+            if (data.coordinatorName !== undefined) payload.coordinator_name = data.coordinatorName;
+            if (data.viceCoordinatorName !== undefined) payload.vice_coordinator_name = data.viceCoordinatorName;
+            
             const { error } = await supabase.from('pastoral_groups').update(payload).eq('id', id);
             if (error) throw error;
         },
@@ -561,8 +564,8 @@ export const ignisApi = {
                 tenant_id: data.tenantId,
                 name: data.name,
                 description: data.description,
-                coordinator_id: data.coordinatorId || null,
-                vice_coordinator_id: data.viceCoordinatorId || null,
+                coordinator_name: data.coordinatorName,
+                vice_coordinator_name: data.viceCoordinatorName,
                 meeting_day: data.meetingDay,
                 meeting_time: data.meetingTime
             }]).select().single();

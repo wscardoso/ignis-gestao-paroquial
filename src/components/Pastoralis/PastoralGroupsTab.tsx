@@ -51,9 +51,13 @@ export const PastoralGroupsTab: React.FC<PastoralGroupsTabProps> = ({ tenantId }
                     </div>
                     <div>
                         <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>{selectedGroup.name}</h2>
-                        <span style={{ fontSize: '0.9rem', opacity: 0.7, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <Calendar size={14} /> {selectedGroup.schedule || 'Sem horário definido'}
-                        </span>
+                        <div style={{ fontSize: '0.9rem', opacity: 0.7, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            {selectedGroup.coordinatorName && <span>Coordenação: {selectedGroup.coordinatorName}</span>}
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <Calendar size={14} /> 
+                                {selectedGroup.meetingDay ? `${selectedGroup.meetingDay} às ${selectedGroup.meetingTime || '--:--'}` : (selectedGroup.schedule || 'Sem horário definido')}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -110,7 +114,15 @@ export const PastoralGroupsTab: React.FC<PastoralGroupsTabProps> = ({ tenantId }
                             </div>
                             <div>
                                 <h3 style={{ fontSize: '1.2rem', fontWeight: 600, margin: '0 0 4px 0' }}>{group.name}</h3>
-                                {group.schedule && <span style={{ fontSize: '0.8rem', opacity: 0.6, display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={12}/>{group.schedule}</span>}
+                                <div style={{ fontSize: '0.8rem', opacity: 0.6, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                    {(group.meetingDay || group.schedule) && (
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                            <Calendar size={12}/>
+                                            {group.meetingDay ? `${group.meetingDay} às ${group.meetingTime || '--:--'}` : group.schedule}
+                                        </span>
+                                    )}
+                                    {group.coordinatorName && <span style={{ color: 'var(--accent)' }}>Coord: {group.coordinatorName}</span>}
+                                </div>
                             </div>
                         </div>
                         {group.description && (

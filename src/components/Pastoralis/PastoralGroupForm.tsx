@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Users, X, Info, UserCheck, CalendarDays, Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { Users, X, Info, UserCheck, CalendarDays, Clock, UserRound } from 'lucide-react';
 import { ignisApi } from '../../services/api';
-import type { PastoralGroup, Person } from '../../services/api';
+import type { PastoralGroup } from '../../services/api';
 
 interface PastoralGroupFormProps {
     tenantId: string;
@@ -20,24 +20,11 @@ export const PastoralGroupForm: React.FC<PastoralGroupFormProps> = ({ tenantId, 
     const [description, setDescription] = useState(group?.description || '');
     const [meetingDay, setMeetingDay] = useState(group?.meetingDay || '');
     const [meetingTime, setMeetingTime] = useState(group?.meetingTime || '');
-    const [coordinatorId, setCoordinatorId] = useState(group?.coordinatorId || '');
-    const [viceId, setViceId] = useState(group?.viceCoordinatorId || '');
+    const [coordinatorName, setCoordinatorName] = useState(group?.coordinatorName || '');
+    const [viceName, setViceName] = useState(group?.viceCoordinatorName || '');
     
-    const [people, setPeople] = useState<Person[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
-
-    useEffect(() => {
-        const fetchPeople = async () => {
-            try {
-                const data = await ignisApi.people.getAll(tenantId);
-                setPeople(data);
-            } catch (err) {
-                console.error('Erro ao carregar pessoas:', err);
-            }
-        };
-        fetchPeople();
-    }, [tenantId]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -47,14 +34,13 @@ export const PastoralGroupForm: React.FC<PastoralGroupFormProps> = ({ tenantId, 
         try {
             if (group) {
                 // Implement update if needed
-                // await ignisApi.people.updateGroup(group.id, { ... });
             } else {
                 await ignisApi.people.createGroup({
                     tenantId,
                     name,
                     description,
-                    coordinatorId: coordinatorId || undefined,
-                    viceCoordinatorId: viceId || undefined,
+                    coordinatorName,
+                    viceCoordinatorName: viceName,
                     meetingDay,
                     meetingTime
                 });
@@ -90,7 +76,7 @@ export const PastoralGroupForm: React.FC<PastoralGroupFormProps> = ({ tenantId, 
             )}
 
             <div style={{ display: 'grid', gap: '20px' }}>
-                <div className="form-group">
+                <div className="form-group" style={{ gridColumn: 'span 2' }}>
                     <label className="form-label">Nome da Pastoral <span style={{ color: 'var(--accent)' }}>*</span></label>
                     <input 
                         type="text" required value={name} 
@@ -102,17 +88,19 @@ export const PastoralGroupForm: React.FC<PastoralGroupFormProps> = ({ tenantId, 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                     <div className="form-group">
                         <label className="form-label"><UserCheck size={14} style={{ marginRight: '4px' }}/> Coordenador</label>
-                        <select value={coordinatorId} onChange={e => setCoordinatorId(e.target.value)} className="input-field">
-                            <option value="">Selecionar...</option>
-                            {people.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                        </select>
+                        <input 
+                            type="text" value={coordinatorName} 
+                            onChange={e => setCoordinatorName(e.target.value)} 
+                            className="input-field" placeholder="Nome do coordenador"
+                        />
                     </div>
                     <div className="form-group">
-                        <label className="form-label">Vice-Coordenador</label>
-                        <select value={viceId} onChange={e => setViceId(e.target.value)} className="input-field">
-                            <option value="">Selecionar...</option>
-                            {people.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                        </select>
+                        <label className="form-label"><UserRound size={14} style={{ marginRight: '4px' }}/> Vice-Coordenador</label>
+                        <input 
+                            type="text" value={viceName} 
+                            onChange={e => setViceName(e.target.value)} 
+                            className="input-field" placeholder="Nome do vice"
+                        />
                     </div>
                 </div>
 
@@ -134,7 +122,7 @@ export const PastoralGroupForm: React.FC<PastoralGroupFormProps> = ({ tenantId, 
                     </div>
                 </div>
 
-                <div className="form-group">
+                <div className="form-group" style={{ gridColumn: 'span 2' }}>
                     <label className="form-label">Descrição</label>
                     <textarea 
                         rows={2} value={description} 
@@ -143,7 +131,7 @@ export const PastoralGroupForm: React.FC<PastoralGroupFormProps> = ({ tenantId, 
                     />
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px', gridColumn: 'span 2' }}>
                     <button type="button" className="btn-secondary" onClick={onClose}>Cancelar</button>
                     <button type="submit" className="btn-primary" disabled={isLoading}>
                         {isLoading ? 'Salvando...' : 'Salvar Pastoral'}
