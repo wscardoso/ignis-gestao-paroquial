@@ -114,13 +114,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside className={`sidebar ${isOpen ? 'sidebar-open' : ''}`}>
       <div className="sidebar-header">
-        <div className="logo-icon">
-          <Flame size={20} fill="currentColor" />
-        </div>
-        <div className="logo-details">
+        <div className="logo-brand">
+          <div className="logo-icon">
+            <Flame size={20} fill="currentColor" />
+          </div>
           <span className="logo-text">IGNIS</span>
-          <span className="logo-tagline">Onde o Espírito Santo age, a Igreja se move.</span>
         </div>
+        <span className="logo-tagline">Onde o Espírito Santo age, a Igreja se move.</span>
       </div>
 
       <nav className="nav-section">

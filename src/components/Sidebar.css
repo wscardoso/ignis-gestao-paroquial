@@ -14,9 +14,15 @@
 
 .sidebar-header {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 12px;
     padding: 0 8px 32px 8px;
+}
+
+.logo-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .logo-icon {
@@ -35,26 +41,18 @@
     font-weight: 700;
     letter-spacing: 0.1em;
     color: var(--text-primary);
-    line-height: 1.1;
-}
-
-.logo-details {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    flex: 1;
-    min-width: 0;
+    line-height: 1;
 }
 
 .logo-tagline {
-    font-size: 12px;
+    font-size: 11px;
     color: #C9A24D;
     opacity: 0.8;
     font-style: italic;
-    line-height: 1.25;
+    line-height: 1.4;
     white-space: normal;
     overflow-wrap: break-word;
-    margin-top: 4px;
+    word-break: break-word;
 }
 
 .nav-section {
